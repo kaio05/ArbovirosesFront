@@ -13,6 +13,7 @@ import DadosGeograficos from './pages/Dashboard/DadosGeograficos';
 import DashboardBairro from './pages/Dashboard/DashboardBairro';
 import CarregarLira from './pages/Lira/CarregarLira';
 import DashboardLira from './pages/Lira/DashboardLira';
+import FatoresSociais from './pages/Dashboard/FatoresSociais';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -64,6 +65,15 @@ function App() {
             <>
               <PageTitle title="Previsão de casos"/>
               <PrevisaoDeCasos />
+            </>
+          }
+        />
+        <Route 
+          path="/dashboard/fatoresSociais"
+          element={
+            <>
+              <PageTitle title="Fatores sociais"/>
+              <FatoresSociais />
             </>
           }
         />
