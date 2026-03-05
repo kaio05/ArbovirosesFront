@@ -11,8 +11,8 @@ import CarregarDados from './pages/Dashboard/CarregarDados';
 import PrevisaoDeCasos from './pages/Dashboard/PrevisaoDeCasos';
 import DadosGeograficos from './pages/Dashboard/DadosGeograficos';
 import DashboardBairro from './pages/Dashboard/DashboardBairro';
-import CarregarLira from './pages/Lira/CarregarLira';
-import DashboardLira from './pages/Lira/DashboardLira';
+// import CarregarLira from './pages/Lira/CarregarLira';
+// import DashboardLira from './pages/Lira/DashboardLira';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -85,7 +85,7 @@ function App() {
             </>
           }
         />
-        <Route
+        {/* <Route
           path="/lira/carregar"
           element={
             <ProtectedRoute>
@@ -93,8 +93,8 @@ function App() {
               <CarregarLira />
             </ProtectedRoute>
           }
-        />
-        <Route
+        /> */}
+        {/* <Route
           path="/lira/dashboard"
           element={
             <>
@@ -102,7 +102,7 @@ function App() {
               <DashboardLira />
             </>
           }
-        />
+        /> */}
         <Route
           path="/auth/login"
           element={

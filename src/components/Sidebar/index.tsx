@@ -201,7 +201,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Previsão de Casos
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink
                   to="/lira/dashboard"
                   className={({ isActive }) =>
@@ -257,9 +257,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     </NavLink>
                   </li>
                 )
-              }
+              } */}
                             {/* <!-- LIRA Menu Items - Direct Links --> */}
-              <li>
+              {/* <li>
                 <NavLink
                   to="/lira/carregar"
                   className={({ isActive }) =>
@@ -280,7 +280,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </svg>
                   Carregar Dados LIRA
                 </NavLink>
-              </li>
+              </li> */}
             </ul> 
           </div> 
 

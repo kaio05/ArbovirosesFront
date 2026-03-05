@@ -129,10 +129,10 @@ const App: React.FC = () => {
         />
       </div>
       <div className='flex flex-col md:flex-row gap-4'>
-        <CountCard
+        {/* <CountCard
           title="Notificações"
           count={notificationsCount}
-        />
+        /> */}
         <CountCard 
           title="Bairros afetados"
           count={affectedNeighborhoods}
