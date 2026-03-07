@@ -1,6 +1,6 @@
 import { ApexOptions } from "apexcharts";
 
-export function ChartOptions(): ApexOptions {
+export function ChartOptions(categories: string[]): ApexOptions {
     return {
         colors: ["#465fff"],
         chart: {
@@ -28,14 +28,7 @@ export function ChartOptions(): ApexOptions {
         colors: ["transparent"],
         },
         xaxis: {
-        categories: [
-            "Filtrada",
-            "Fervida",
-            "Clorada",
-            "Mineral",
-            "Sem tratamento",
-            "Não informado"
-        ],
+        categories: [...categories, "Não informado", "Total"],
         axisBorder: {
             show: false,
         },

@@ -6,7 +6,12 @@ import ColumnGraphic from "../../components/Charts/ColumnGraphic";
 import { ApexOptions } from "apexcharts";
 import { ChartOptions } from "../../service/components/Determinantes-Sociais/ChartOptions";
 
-const columnGraphicOptions: ApexOptions = ChartOptions();
+const waterSupplyOptions: ApexOptions = ChartOptions(["Rede Encanada", "Poço", "Cisterna", "Carro Pipa", "Outro"]);
+const waterTreatmentOptions: ApexOptions = ChartOptions(["Filtrada", "Fervida", "Clorada", "Mineral", "Sem Tratamento"]);
+const sewageDrainageOptions: ApexOptions = ChartOptions(["Rede Coletora", "Fossa Séptica", "Fossa Rudimentar", "Direto para Rio/Mar", "Céu Aberto", "Outra Forma"]);
+const trashCollectionOptions: ApexOptions = ChartOptions(["Coletado", "Queimado/Enterrado", "Céu Aberto", "Outro"]);
+const familyIncomeOptions: ApexOptions = ChartOptions(["1/4 Salário", "1/2 Salário", "2 Salário Mínimos", "3 Salários Mínimos", "4 Salários Mínimos", "Sem renda", "> 4 Salários"]);
+const educationOptions: ApexOptions = ChartOptions(["Creche", "Pré-escola", "Classe de alfabetização", "1° ao 4°", "5° ao 8°", "Ensino fundamental completo", "Ensino fundamental especial", "EJA 1° ao 4°", "EJA 5° ao 8°", "Ensino médio", "Ensino médio especial", "Ensino médio EJA", "Superior/especialização/mestrado/doutorado", "Nenhum"]);
 
 const DeterminantesSociais: React.FC = () => {
 
@@ -98,7 +103,42 @@ const DeterminantesSociais: React.FC = () => {
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
                 <ColumnGraphic 
                     title='Abastecimento de água'
-                    options={columnGraphicOptions}
+                    options={waterSupplyOptions}
+                    series={series}
+                />
+            </div>
+            <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
+                <ColumnGraphic 
+                    title='Tratamento de água'
+                    options={waterTreatmentOptions}
+                    series={series}
+                />
+            </div>
+            <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
+                <ColumnGraphic 
+                    title='Forma de escoamento do banheiro ou sanitário'
+                    options={sewageDrainageOptions}
+                    series={series}
+                />
+            </div>
+            <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
+                <ColumnGraphic 
+                    title='Destino do lixo'
+                    options={trashCollectionOptions}
+                    series={series}
+                />
+            </div>
+            <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
+                <ColumnGraphic 
+                    title='Renda familiar'
+                    options={familyIncomeOptions}
+                    series={series}
+                />
+            </div>
+            <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
+                <ColumnGraphic 
+                    title='Escolaridade'
+                    options={educationOptions}
                     series={series}
                 />
             </div>
