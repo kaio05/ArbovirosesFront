@@ -13,7 +13,7 @@ import AgravoAccumulatedLineChart from '../../components/Charts/AgravoAccumulate
 import { countByEpidemiologicalWeekAccumulatedOptions, mountAgravoLineAccumulatedData } from '../../service/components/EpidemiologicalWeekAccumulated';
 import { CountCard } from '../../components/Cards/CountCard';
 import { affectedNeighborhoodCount } from '../../service/components/affectedNeighborhoodCount';
-import { notificationsCountData } from '../../service/components/notificationsCount';
+// import { notificationsCountData } from '../../service/components/notificationsCount';
 import BaseTable from '../../components/Tables/BaseTable';
 import { mountNeighborhoodData } from '../../service/components/NeighborhoodInfoTable';
 import { NeighborhoodInfo } from '../../components/Entity/NeighborhoodInfo';
@@ -29,7 +29,7 @@ const App: React.FC = () => {
   const [countBySexoSeries, setCountBySexoSeries] = useState<any>([])
   const [ageRangeCategories, setAgeRangeCategories] = useState<any>([])
   const [affectedNeighborhoods, setAffectedNeighborhoods] = useState<any>(0)
-  const [notificationsCount, setNotificationsCount] = useState<any>(0)
+  // const [notificationsCount, setNotificationsCount] = useState<any>(0)
   const [neighborhoodApiData, setNeighborhoodApiData] = useState<NeighborhoodInfo[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -53,7 +53,7 @@ const App: React.FC = () => {
           mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected),
           mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected),
           affectedNeighborhoodCount(setAffectedNeighborhoods, yearSelected, agravoSelected),
-          notificationsCountData(setNotificationsCount, yearSelected, agravoSelected),
+          // notificationsCountData(setNotificationsCount, yearSelected, agravoSelected),
         ]);
         
         localStorage.setItem('yearSelected', yearSelected);

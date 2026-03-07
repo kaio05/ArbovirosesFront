@@ -85,24 +85,7 @@ function App() {
             </>
           }
         />
-        {/* <Route
-          path="/lira/carregar"
-          element={
-            <ProtectedRoute>
-              <PageTitle title="Carregar Dados LIRA" />
-              <CarregarLira />
-            </ProtectedRoute>
-          }
-        /> */}
-        {/* <Route
-          path="/lira/dashboard"
-          element={
-            <>
-              <PageTitle title="Dashboard LIRA" />
-              <DashboardLira />
-            </>
-          }
-        /> */}
+        
         <Route
           path="/auth/login"
           element={
