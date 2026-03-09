@@ -17,7 +17,7 @@ export default async function getApiData(uri: string)
     const response = await fetchApi(uri)
     const data = await response.json()
   
-    return data.data
+    return data
   } catch (error) {
     
   }

@@ -1,44 +1,77 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DefaultLayout from "../../layout/DefaultLayout";
-import { SocialFactorsCard } from "../../components/Cards/SocialDeterminantsCard";
-import { StrongCountCard } from "../../components/Cards/StrongCountCard";
 import ColumnGraphic from "../../components/Charts/ColumnGraphic";
 import { ApexOptions } from "apexcharts";
-import { ChartOptions } from "../../service/components/Determinantes-Sociais/ChartOptions";
+import { ChartOptions, mountDeterminantCollumData } from "../../service/components/Determinantes-Sociais/ChartOptions";
+import getApiData from "../../service/api/fetchApiData";
 
-const waterSupplyOptions: ApexOptions = ChartOptions(["Rede Encanada", "Poço", "Cisterna", "Carro Pipa", "Outro"]);
-const waterTreatmentOptions: ApexOptions = ChartOptions(["Filtrada", "Fervida", "Clorada", "Mineral", "Sem Tratamento"]);
-const sewageDrainageOptions: ApexOptions = ChartOptions(["Rede Coletora", "Fossa Séptica", "Fossa Rudimentar", "Direto para Rio/Mar", "Céu Aberto", "Outra Forma"]);
-const trashCollectionOptions: ApexOptions = ChartOptions(["Coletado", "Queimado/Enterrado", "Céu Aberto", "Outro"]);
-const familyIncomeOptions: ApexOptions = ChartOptions(["1/4 Salário", "1/2 Salário", "2 Salário Mínimos", "3 Salários Mínimos", "4 Salários Mínimos", "Sem renda", "> 4 Salários"]);
-const educationOptions: ApexOptions = ChartOptions(["Creche", "Pré-escola", "Classe de alfabetização", "1° ao 4°", "5° ao 8°", "Ensino fundamental completo", "Ensino fundamental especial", "EJA 1° ao 4°", "EJA 5° ao 8°", "Ensino médio", "Ensino médio especial", "Ensino médio EJA", "Superior/especialização/mestrado/doutorado", "Nenhum"]);
+const waterSupplyOptions: ApexOptions = ChartOptions(["Rede Encanada", "Poço", "Cisterna", "Carro Pipa", "Outro", "Não Informado", "Total"]);
+const waterTreatmentOptions: ApexOptions = ChartOptions(["Clorada", "Fervida", "Filtrada", "Mineral", "Sem Tratamento", "Não Informado", "Total"]);
+const sewageDrainageOptions: ApexOptions = ChartOptions(["Rede Coletora", "Fossa Séptica", "Fossa Rudimentar", "Direto para Rio/Mar", "Céu Aberto", "Outra Forma", "Não Informado", "Total"]);
+const trashCollectionOptions: ApexOptions = ChartOptions(["Coletado", "Queimado/Enterrado", "Céu Aberto", "Outro", "Não Informado", "Total"]);
+const familyIncomeOptions: ApexOptions = ChartOptions(["Sem renda", "1/4 Salário", "1/2 Salário", "1 Salário Mínimo", "2 Salário Mínimos", "3 Salários Mínimos", "4 Salários Mínimos", "> 4 Salários", "Não Informado", "Total"]);
+const educationOptions: ApexOptions = ChartOptions(["Nenhum", "Creche", "Pré-escola", "Classe de alfabetização", "1° ao 4°", "5° ao 8°", "EJA 1° ao 4°", "EJA 5° ao 8°", "Ensino fundamental completo", "Ensino fundamental especial", "Ensino médio", "Ensino médio especial", "Ensino médio EJA", "Superior/especialização/mestrado/doutorado", "Mobral", "Não Informado", "Total"]);
 
 const DeterminantesSociais: React.FC = () => {
 
-    const neighborhoods = ['bairro1', 'bairro2']
+    const neighborhoods = ['Todos', 'BOM JESUS', 'SANTO ANTONIO', 'BOM JARDIM', 'BARROCAS', 'PASSAGEM DE PEDRA', 'ESTRADA DA RAIZ', 'RIACHO GRANDE', 'LAGOA DO MATO', 'PERREIROS', 'BELO HORIZONTE'];
 
-    const [neighborhoodSelected, setNeighborhoodSelected] = useState<string>(() => {
-        return localStorage.getItem('neighborhoodSelected') || ''
-    });
+    const [neighborhoodSelected, setNeighborhoodSelected] = useState<string>('Todos');
+
+    const [waterSupplyData, setWaterSupplyData] = useState<any[]>([]);
+    const [waterTreatmentData, setWaterTreatmentData] = useState<any[]>([]);
+    const [sewageDrainageData, setSewageDrainageData] = useState<any[]>([]);
+    const [trashCollectionData, setTrashCollectionData] = useState<any[]>([]);
+    const [familyIncomeData, setFamilyIncomeData] = useState<any[]>([]);
+    const [educationData, setEducationData] = useState<any[]>([]);
+
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            try {
+                const apiData = await getApiData('');
+                console.log(apiData)
+                await Promise.allSettled([
+                    mountDeterminantCollumData(apiData, setWaterSupplyData,
+                    setWaterTreatmentData,
+                    setSewageDrainageData,
+                    setTrashCollectionData,
+                    setFamilyIncomeData,
+                    setEducationData,
+                    neighborhoodSelected)
+                ]);
+            } catch (err) {
+                console.error('Erro ao buscar dados: ', err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadData();
+    }, [neighborhoodSelected]);
 
     const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
-    const [waterSupplyCount, setWaterSupplyCount] = useState<any>(0);
-    const [sewageDrainageCount, setSewageDrainageCount] = useState<any>(0);
-    const [trashCollectingCount, setTrashCollectingCount] = useState<any>(0);
-    const [familyIncomeCount, setFamilyIncomeCount] = useState<any>(0);
-    const [totalHouses, setTotalHouses] = useState<any>(10);
+    // const [waterSupplyCount, setWaterSupplyCount] = useState<any>(0);
+    // const [sewageDrainageCount, setSewageDrainageCount] = useState<any>(0);
+    // const [trashCollectingCount, setTrashCollectingCount] = useState<any>(0);
+    // const [familyIncomeCount, setFamilyIncomeCount] = useState<any>(0);
+    // const [totalHouses, setTotalHouses] = useState<any>(10);
 
-    // A iplementar:
-    ///////////////
-    const series = [
-        {
-        name: "Residências",
-        data: [168, 385, 201, 298, 187, 195],
-        },
-    ];
-    ///////////////
-
+    if (loading || waterSupplyData.length == 0) {
+        return (
+        <DefaultLayout>
+            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex flex-col items-center gap-4">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
+                <p className="text-lg text-gray-600 dark:text-gray-400">Carregando dados...</p>
+            </div>
+            </div>
+        </DefaultLayout>
+        );
+    }
     return (
         <DefaultLayout>
             <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -69,13 +102,15 @@ const DeterminantesSociais: React.FC = () => {
                 </div>
             </div>
             {/* Cards */}
-            <div className='flex flex-col md:flex-row gap-4'>
-                <SocialFactorsCard
+            {/* <div className='flex flex-col md:flex-row gap-4'>
+                {!loading &&
+                    <SocialFactorsCard
                     title="Abastecimento de água"
                     count={waterSupplyCount}
                     totalHouses={totalHouses}
                     label="Rede Encanada"
                 />
+                }
                 <SocialFactorsCard 
                     title="Forma de escoamento"
                     count={sewageDrainageCount}
@@ -98,48 +133,48 @@ const DeterminantesSociais: React.FC = () => {
                     title="Total de residências"
                     count={totalHouses}
                 />
-            </div>
+            </div> */}
             {/* Graphs */}
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
                 <ColumnGraphic 
                     title='Abastecimento de água'
                     options={waterSupplyOptions}
-                    series={series}
+                    series={waterSupplyData}
                 />
             </div>
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
                 <ColumnGraphic 
                     title='Tratamento de água'
                     options={waterTreatmentOptions}
-                    series={series}
+                    series={waterTreatmentData}
                 />
             </div>
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
                 <ColumnGraphic 
                     title='Forma de escoamento do banheiro ou sanitário'
                     options={sewageDrainageOptions}
-                    series={series}
+                    series={sewageDrainageData}
                 />
             </div>
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
                 <ColumnGraphic 
                     title='Destino do lixo'
                     options={trashCollectionOptions}
-                    series={series}
+                    series={trashCollectionData}
                 />
             </div>
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
                 <ColumnGraphic 
                     title='Renda familiar'
                     options={familyIncomeOptions}
-                    series={series}
+                    series={familyIncomeData}
                 />
             </div>
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
                 <ColumnGraphic 
                     title='Escolaridade'
                     options={educationOptions}
-                    series={series}
+                    series={educationData}
                 />
             </div>
         </DefaultLayout>
