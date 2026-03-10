@@ -12,11 +12,11 @@ export const SocialFactorsCard: React.FC<SocialFactorsCardProps> = ({title, coun
                 {title}
             </div>
             <div>
-                <span className="text-title-xxl pr-2 font-bold">{count}</span>
+                <span className="text-title-xxl pr-2 font-bold">{count.toLocaleString()}</span>
                 <span>residências</span>
                 {totalHouses > 0 && 
                 <p className="text-xs pt-2">
-                    <span className="font-semibold text-lg">{count / totalHouses}%</span> do total com <span className="font-bold">{label}</span></p>}
+                    <span className="font-semibold text-lg">{(count / totalHouses * 100).toFixed(2)}%</span> do total com <span className="font-bold">{label}</span></p>}
             </div>
         </div>
     );

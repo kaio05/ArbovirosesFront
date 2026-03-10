@@ -1,6 +1,6 @@
 import { ApexOptions } from "apexcharts";
 
-export async function mountDeterminantCollumData(apiData: any, setWaterSupplyData: Function, setWaterTreatmentData: Function , setSewageDrainageData: Function, setTrashCollectingData: Function, setFamilyIncomeData: Function, setEducationData: Function, neighborhood: string) {
+export async function mountDeterminantCollumData(apiData: any, setWaterSupplyData: Function, setWaterTreatmentData: Function , setSewageDrainageData: Function, setTrashCollectingData: Function, setFamilyIncomeData: Function, setEducationData: Function, setWaterSupplyCount: Function, setWaterTreatmentCount: Function, setSewageDrainageCount: Function, setTrashCollectingCount: Function, setFamilyIncomeCount: Function, setEducationCount: Function, neighborhood: string) {
 
   const waterSupplyData = [0, 0, 0, 0, 0, 0, 0];
   const waterTreatmentData = [0, 0, 0, 0, 0, 0, 0];
@@ -8,9 +8,22 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
   const trashCollectionData = [0, 0, 0, 0, 0, 0];
   const familyIncomeData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   const educationData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let waterSupplyCount = 0;
+  let waterTreatmentCount = 0;
+  let sewageDrainageCount = 0;
+  let trashCollectingCount = 0;
+  let familyIncomeCount = 0;
+  let educationCount = 0;
 
   for(const data of apiData) {
     if(data.bairro == neighborhood || neighborhood == 'Todos') {
+      waterSupplyCount += data.aguaRede;
+      waterTreatmentCount += data.tratamentoClorada;
+      sewageDrainageCount += data.escoamentoRedeColetora;
+      trashCollectingCount += data.lixoColetado;
+      familyIncomeCount += data.rendaUmSalario;
+      educationCount += data.eduFundamentalCompleto;
+
       waterSupplyData[0] += data.aguaRede;
       waterSupplyData[1] += data.aguaPoco;
       waterSupplyData[2] += data.aguaCisterna;
@@ -102,6 +115,13 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
       name: "Residências",  
       data: educationData
   }]);
+
+  setWaterSupplyCount(waterSupplyCount);
+  setWaterTreatmentCount(waterTreatmentCount);
+  setSewageDrainageCount(sewageDrainageCount);
+  setTrashCollectingCount(trashCollectingCount);
+  setFamilyIncomeCount(familyIncomeCount);
+  setEducationCount(educationCount);
 }
 
 export function ChartOptions(categories: string[]): ApexOptions {

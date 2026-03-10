@@ -4,6 +4,7 @@ import ColumnGraphic from "../../components/Charts/ColumnGraphic";
 import { ApexOptions } from "apexcharts";
 import { ChartOptions, mountDeterminantCollumData } from "../../service/components/Determinantes-Sociais/ChartOptions";
 import getApiData from "../../service/api/fetchApiData";
+import { SocialFactorsCard } from "../../components/Cards/SocialDeterminantsCard";
 
 const waterSupplyOptions: ApexOptions = ChartOptions(["Rede Encanada", "Poço", "Cisterna", "Carro Pipa", "Outro", "Não Informado", "Total"]);
 const waterTreatmentOptions: ApexOptions = ChartOptions(["Clorada", "Fervida", "Filtrada", "Mineral", "Sem Tratamento", "Não Informado", "Total"]);
@@ -25,6 +26,13 @@ const DeterminantesSociais: React.FC = () => {
     const [familyIncomeData, setFamilyIncomeData] = useState<any[]>([]);
     const [educationData, setEducationData] = useState<any[]>([]);
 
+    const [waterSupplyCount, setWaterSupplyCount] = useState<any>(0);
+    const [waterTreatmentCount, setWaterTreatmentCount] = useState<any>(0);
+    const [sewageDrainageCount, setSewageDrainageCount] = useState<any>(0);
+    const [trashCollectingCount, setTrashCollectingCount] = useState<any>(0);
+    const [familyIncomeCount, setFamilyIncomeCount] = useState<any>(0);
+    const [educationCount, setEducationCount] = useState<any>(0);
+
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -32,7 +40,7 @@ const DeterminantesSociais: React.FC = () => {
             setLoading(true);
             try {
                 const apiData = await getApiData('');
-                console.log(apiData)
+                // console.log(apiData);
                 await Promise.allSettled([
                     mountDeterminantCollumData(apiData, setWaterSupplyData,
                     setWaterTreatmentData,
@@ -40,6 +48,12 @@ const DeterminantesSociais: React.FC = () => {
                     setTrashCollectionData,
                     setFamilyIncomeData,
                     setEducationData,
+                    setWaterSupplyCount,
+                    setWaterTreatmentCount,
+                    setSewageDrainageCount,
+                    setTrashCollectingCount,
+                    setFamilyIncomeCount,
+                    setEducationCount,
                     neighborhoodSelected)
                 ]);
             } catch (err) {
@@ -53,12 +67,6 @@ const DeterminantesSociais: React.FC = () => {
     }, [neighborhoodSelected]);
 
     const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
-
-    // const [waterSupplyCount, setWaterSupplyCount] = useState<any>(0);
-    // const [sewageDrainageCount, setSewageDrainageCount] = useState<any>(0);
-    // const [trashCollectingCount, setTrashCollectingCount] = useState<any>(0);
-    // const [familyIncomeCount, setFamilyIncomeCount] = useState<any>(0);
-    // const [totalHouses, setTotalHouses] = useState<any>(10);
 
     if (loading || waterSupplyData.length == 0) {
         return (
@@ -102,38 +110,44 @@ const DeterminantesSociais: React.FC = () => {
                 </div>
             </div>
             {/* Cards */}
-            {/* <div className='flex flex-col md:flex-row gap-4'>
-                {!loading &&
-                    <SocialFactorsCard
+            <div className='flex flex-wrap gap-4'>
+                <SocialFactorsCard
                     title="Abastecimento de água"
                     count={waterSupplyCount}
-                    totalHouses={totalHouses}
-                    label="Rede Encanada"
+                    totalHouses={waterSupplyData[0].data[6]}
+                    label="Rede encanada"
                 />
-                }
+                <SocialFactorsCard 
+                    title="Tratamento de água"
+                    count={waterTreatmentCount}
+                    totalHouses={waterTreatmentData[0].data[6]}
+                    label="Água clorada"
+                />
                 <SocialFactorsCard 
                     title="Forma de escoamento"
                     count={sewageDrainageCount}
-                    totalHouses={totalHouses}
-                    label="Fossa Séptica"
+                    totalHouses={sewageDrainageData[0].data[7]}
+                    label="Rede coletora"
                 />
                 <SocialFactorsCard 
                     title="Destino do lixo"
                     count={trashCollectingCount}
-                    totalHouses={totalHouses}
-                    label="Coletado"
+                    totalHouses={trashCollectionData[0].data[5]}
+                    label="Coleta de lixo"
                 />
                 <SocialFactorsCard 
                     title="Renda familiar"
                     count={familyIncomeCount}
-                    totalHouses={totalHouses}
-                    label="com 1 salário mínimo"
+                    totalHouses={familyIncomeData[0].data[9]}
+                    label="1 salário mínimo"
                 />
-                <StrongCountCard 
-                    title="Total de residências"
-                    count={totalHouses}
+                <SocialFactorsCard 
+                    title="Escolaridade"
+                    count={educationCount}
+                    totalHouses={educationData[0].data[15]}
+                    label="ensino fundamental completo"
                 />
-            </div> */}
+            </div>
             {/* Graphs */}
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
                 <ColumnGraphic 
