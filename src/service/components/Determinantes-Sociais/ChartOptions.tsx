@@ -1,6 +1,6 @@
 import { ApexOptions } from "apexcharts";
 
-export async function mountDeterminantCollumData(apiData: any, setWaterSupplyData: Function, setWaterTreatmentData: Function , setSewageDrainageData: Function, setTrashCollectingData: Function, setFamilyIncomeData: Function, setEducationData: Function, setWaterSupplyCount: Function, setWaterTreatmentCount: Function, setSewageDrainageCount: Function, setTrashCollectingCount: Function, setFamilyIncomeCount: Function, setEducationCount: Function, neighborhood: string) {
+export async function mountDeterminantCollumData(apiData: any, setWaterSupplyData: Function, setWaterTreatmentData: Function , setSewageDrainageData: Function, setTrashCollectingData: Function, setFamilyIncomeData: Function, setEducationData: Function, setWaterSupplyCount: Function, setWaterTreatmentCount: Function, setSewageDrainageCount: Function, setTrashCollectingCount: Function, setFamilyIncomeCount: Function, setEducationCount: Function, setTotalHouses: Function, neighborhood: string) {
 
   const waterSupplyData = [0, 0, 0, 0, 0, 0, 0];
   const waterTreatmentData = [0, 0, 0, 0, 0, 0, 0];
@@ -122,6 +122,7 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
   setTrashCollectingCount(trashCollectingCount);
   setFamilyIncomeCount(familyIncomeCount);
   setEducationCount(educationCount);
+  setTotalHouses(waterSupplyData[6]);
 }
 
 export function ChartOptions(categories: string[]): ApexOptions {

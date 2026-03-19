@@ -32,7 +32,7 @@ const DeterminantesSociais: React.FC = () => {
     const [trashCollectingCount, setTrashCollectingCount] = useState<any>(0);
     const [familyIncomeCount, setFamilyIncomeCount] = useState<any>(0);
     const [educationCount, setEducationCount] = useState<any>(0);
-
+    const [totalHouses, setTotalHouses] = useState<any>(0);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -54,6 +54,7 @@ const DeterminantesSociais: React.FC = () => {
                     setTrashCollectingCount,
                     setFamilyIncomeCount,
                     setEducationCount,
+                    setTotalHouses,
                     neighborhoodSelected)
                 ]);
             } catch (err) {
@@ -111,6 +112,13 @@ const DeterminantesSociais: React.FC = () => {
             </div>
             {/* Cards */}
             <div className='flex flex-wrap gap-4'>
+                <SocialFactorsCard
+                    title="Total de residências"
+                    count={totalHouses}
+                    totalHouses={totalHouses}
+                    label="Residencias"
+                    showPercentage={false}
+                />
                 <SocialFactorsCard
                     title="Abastecimento de água"
                     count={waterSupplyCount}

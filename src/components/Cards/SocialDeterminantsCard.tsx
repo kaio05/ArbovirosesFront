@@ -3,6 +3,7 @@ interface SocialFactorsCardProps {
     count: number;
     totalHouses: number;
     label: string;
+    showPercentage?: boolean;
 }
 
 export const SocialFactorsCard: React.FC<SocialFactorsCardProps> = ({title, count, totalHouses, label}) => {
