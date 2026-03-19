@@ -18,7 +18,6 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
   for(const data of apiData) {
     if(data.bairro == neighborhood || neighborhood == 'Todos') {
       waterSupplyCount += data.aguaRede;
-      waterTreatmentCount += data.tratamentoClorada;
       sewageDrainageCount += data.escoamentoRedeColetora;
       trashCollectingCount += data.lixoColetado;
       familyIncomeCount += data.rendaUmSalario;
@@ -116,6 +115,16 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
       data: educationData
   }]);
 
+  const treatmentValues = [
+    waterTreatmentData[0], // Clorada
+    waterTreatmentData[1], // Fervida
+    waterTreatmentData[2], // Filtrada
+    waterTreatmentData[3], // Mineral
+    waterTreatmentData[4], // Sem Tratamento
+    waterTreatmentData[5], // Não Informado
+];
+waterTreatmentCount = Math.max(...treatmentValues);
+
   setWaterSupplyCount(waterSupplyCount);
   setWaterTreatmentCount(waterTreatmentCount);
   setSewageDrainageCount(sewageDrainageCount);
@@ -125,7 +134,7 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
   setTotalHouses(waterSupplyData[6]);
 }
 
-export function ChartOptions(categories: string[]): ApexOptions {
+export function ChartOptions(categories: string[], total: number): ApexOptions {
     return {
         colors: ['#3C50E0', '#80CAEE'],
         chart: {
@@ -183,6 +192,15 @@ export function ChartOptions(categories: string[]): ApexOptions {
         },
         fill: {
           opacity: 1,
+        },
+
+        tooltip: {
+            y: {
+                formatter: (value: number) => {
+                    const percentage = total > 0 ? (value / total * 100).toFixed(2) : '0.00';
+                    return `${value.toLocaleString()} residências (${percentage}%)`;
+                }
+            }
         },
       };
 }
