@@ -19,14 +19,13 @@ const DeterminantesSociais: React.FC = () => {
     const [sewageDrainageData, setSewageDrainageData] = useState<any[]>([]);
     const [trashCollectionData, setTrashCollectionData] = useState<any[]>([]);
     const [familyIncomeData, setFamilyIncomeData] = useState<any[]>([]);
-    const [educationData, setEducationData] = useState<any[]>([]);
+    
 
     const [waterSupplyCount, setWaterSupplyCount] = useState<any>(0);
     const [waterTreatmentCount, setWaterTreatmentCount] = useState<any>(0);
     const [sewageDrainageCount, setSewageDrainageCount] = useState<any>(0);
     const [trashCollectingCount, setTrashCollectingCount] = useState<any>(0);
     const [familyIncomeCount, setFamilyIncomeCount] = useState<any>(0);
-    const [educationCount, setEducationCount] = useState<any>(0);
     const [totalHouses, setTotalHouses] = useState<any>(0);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -35,7 +34,6 @@ const DeterminantesSociais: React.FC = () => {
     const sewageDrainageOptions = useMemo(() => ChartOptions(["Rede Coletora", "Fossa Séptica", "Fossa Rudimentar", "Direto para Rio/Mar", "Céu Aberto", "Outra Forma", "Não Informado", "Total"], sewageDrainageData[0]?.data[7] ?? 0), [sewageDrainageData]);
     const trashCollectionOptions = useMemo(() => ChartOptions(["Coletado", "Queimado/Enterrado", "Céu Aberto", "Outro", "Não Informado", "Total"], trashCollectionData[0]?.data[5] ?? 0), [trashCollectionData]);
     const familyIncomeOptions = useMemo(() => ChartOptions(["Sem renda", "1/4 Salário", "1/2 Salário", "1 Salário Mínimo", "2 Salário Mínimos", "3 Salários Mínimos", "4 Salários Mínimos", "> 4 Salários", "Não Informado", "Total"], familyIncomeData[0]?.data[9] ?? 0), [familyIncomeData]);
-    const educationOptions = useMemo(() => ChartOptions(["Nenhum", "Creche", "Pré-escola", "Classe de alfabetização", "1° ao 4°", "5° ao 8°", "EJA 1° ao 4°", "EJA 5° ao 8°", "Ensino fundamental completo", "Ensino fundamental especial", "Ensino médio", "Ensino médio especial", "Ensino médio EJA", "Superior/especialização/mestrado/doutorado", "Mobral", "Não Informado", "Total"], educationData[0]?.data[15] ?? 0), [educationData]);
     
     const waterTreatmentLabels = ["Clorada", "Fervida", "Filtrada", "Mineral", "Sem Tratamento", "Não Informado"];
 
@@ -58,13 +56,11 @@ const DeterminantesSociais: React.FC = () => {
                     setSewageDrainageData,
                     setTrashCollectionData,
                     setFamilyIncomeData,
-                    setEducationData,
                     setWaterSupplyCount,
                     setWaterTreatmentCount,
                     setSewageDrainageCount,
                     setTrashCollectingCount,
                     setFamilyIncomeCount,
-                    setEducationCount,
                     setTotalHouses,
                     neighborhoodSelected)
                 ]);
@@ -143,29 +139,24 @@ const DeterminantesSociais: React.FC = () => {
                     label={mostCommonTreatmentLabel} 
                 />
                 <SocialFactorsCard 
-                    title="Forma de escoamento"
+                    title="Forma de escoamento prevalente"
                     count={sewageDrainageCount}
                     totalHouses={sewageDrainageData[0].data[7]}
                     label="Rede coletora"
                 />
                 <SocialFactorsCard 
-                    title="Destino do lixo"
+                    title="Destino do lixo prevalente"
                     count={trashCollectingCount}
                     totalHouses={trashCollectionData[0].data[5]}
                     label="Coleta de lixo"
                 />
                 <SocialFactorsCard 
-                    title="Renda familiar"
+                    title="Renda familiar prevalente"
                     count={familyIncomeCount}
                     totalHouses={familyIncomeData[0].data[9]}
                     label="1 salário mínimo"
                 />
-                <SocialFactorsCard 
-                    title="Escolaridade"
-                    count={educationCount}
-                    totalHouses={educationData[0].data[15]}
-                    label="ensino fundamental completo"
-                />
+               
             </div>
             {/* Graphs */}
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
@@ -203,13 +194,7 @@ const DeterminantesSociais: React.FC = () => {
                     series={familyIncomeData}
                 />
             </div>
-            <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
-                <ColumnGraphic 
-                    title='Escolaridade'
-                    options={educationOptions}
-                    series={educationData}
-                />
-            </div>
+            
         </DefaultLayout>
     );
 };

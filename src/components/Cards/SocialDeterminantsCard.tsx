@@ -6,7 +6,7 @@ interface SocialFactorsCardProps {
     showPercentage?: boolean;
 }
 
-export const SocialFactorsCard: React.FC<SocialFactorsCardProps> = ({title, count, totalHouses, label, showPercentage = true}) => {
+export const SocialFactorsCard: React.FC<SocialFactorsCardProps> = ({title, count,  label, showPercentage = true, totalHouses}) => {
     return (
         <div className="border-l-4 border-indigo-500 text-lg flex flex-col justify-between gap-2 px-3 rounded-md text-black dark:text-white grow bg-white dark:bg-boxdark p-2">
             <div className="text-lg">
