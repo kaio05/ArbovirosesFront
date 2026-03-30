@@ -13,11 +13,13 @@ export const SocialFactorsCard: React.FC<SocialFactorsCardProps> = ({title, coun
                 {title}
             </div>
             <div>
-                <span className="text-title-xxl pr-2 font-bold">{count.toLocaleString()}</span>
-                <span>residências</span>
-                {showPercentage && totalHouses > 0 && 
-                <p className="text-xs pt-2">
-                    <span className="font-semibold text-lg">{(count / totalHouses * 100).toFixed(2)}%</span> do total com <span className="font-bold">{label}</span></p>}
+                <span className="text-title-xxl pr-2 font-bold" title={''+ count}>{showPercentage && totalHouses > 0 ? (count / totalHouses * 100).toFixed(2) : 0}%</span>
+                <span>{label}</span>
+                <p className="pt-2">
+                    <span className="font-semibold" >
+                        </span>Total: <span className="font-bold">{totalHouses.toLocaleString()}
+                    </span>
+                </p>
             </div>
         </div>
     );
