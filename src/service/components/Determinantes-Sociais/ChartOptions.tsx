@@ -1,29 +1,15 @@
 import { ApexOptions } from "apexcharts";
 
-export async function mountDeterminantCollumData(apiData: any, setWaterSupplyData: Function, setWaterTreatmentData: Function , setSewageDrainageData: Function, setTrashCollectingData: Function, setFamilyIncomeData: Function, setEducationData: Function, setWaterSupplyCount: Function, setWaterTreatmentCount: Function, setSewageDrainageCount: Function, setTrashCollectingCount: Function, setFamilyIncomeCount: Function, setEducationCount: Function, neighborhood: string) {
+export async function mountDeterminantCollumData(apiData: any, setWaterSupplyData: Function, setWaterTreatmentData: Function , setSewageDrainageData: Function, setTrashCollectingData: Function, setFamilyIncomeData: Function,  setWaterSupplyCount: Function, setWaterTreatmentCount: Function, setSewageDrainageCount: Function, setTrashCollectingCount: Function, setFamilyIncomeCount: Function, /*setTotalHouses: Function,*/ neighborhood: string) {
 
   const waterSupplyData = [0, 0, 0, 0, 0, 0, 0];
   const waterTreatmentData = [0, 0, 0, 0, 0, 0, 0];
   const sewageDrainageData = [0, 0, 0, 0, 0, 0, 0, 0];
   const trashCollectionData = [0, 0, 0, 0, 0, 0];
   const familyIncomeData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  const educationData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  let waterSupplyCount = 0;
-  let waterTreatmentCount = 0;
-  let sewageDrainageCount = 0;
-  let trashCollectingCount = 0;
-  let familyIncomeCount = 0;
-  let educationCount = 0;
-
+  
   for(const data of apiData) {
     if(data.bairro == neighborhood || neighborhood == 'Todos') {
-      waterSupplyCount += data.aguaRede;
-      waterTreatmentCount += data.tratamentoClorada;
-      sewageDrainageCount += data.escoamentoRedeColetora;
-      trashCollectingCount += data.lixoColetado;
-      familyIncomeCount += data.rendaUmSalario;
-      educationCount += data.eduFundamentalCompleto;
-
       waterSupplyData[0] += data.aguaRede;
       waterSupplyData[1] += data.aguaPoco;
       waterSupplyData[2] += data.aguaCisterna;
@@ -67,22 +53,7 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
       familyIncomeData[8] += data.rendaNaoInformado;
       familyIncomeData[9] += data.rendaTotal;
 
-      educationData[0] += data.eduNenhum;
-      educationData[1] += data.eduCreche;
-      educationData[2] += data.eduPreEscola;
-      educationData[3] += data.eduAlfabetizacao;
-      educationData[4] += data.edu1a4;
-      educationData[5] += data.edu1a8;
-      educationData[6] += data.eduEja1a4;
-      educationData[7] += data.eduEja1a8;
-      educationData[8] += data.eduFundamentalCompleto;
-      educationData[9] += data.eduFundamentalEspecial;
-      educationData[10] += data.eduMedio;
-      educationData[11] += data.eduMedioEspecial;
-      educationData[12] += data.eduSuperior;
-      educationData[13] += data.eduMobral;
-      educationData[14] += data.eduNaoInformado;
-      educationData[15] += data.eduTotal;
+   
     }
   }
 
@@ -111,20 +82,22 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
       data: familyIncomeData
   }]);
 
-  setEducationData([{
-      name: "Residências",  
-      data: educationData
-  }]);
+  let waterSupplyCount = Math.max(...waterSupplyData.slice(0,5));
+  let waterTreatmentCount = Math.max(...waterTreatmentData.slice(0,5));
+  let sewageDrainageCount = Math.max(...sewageDrainageData.slice(0,6));
+  let trashCollectingCount = Math.max(...trashCollectionData.slice(0,4));
+  let familyIncomeCount = Math.max(...familyIncomeData.slice(0,8));
+
+  
 
   setWaterSupplyCount(waterSupplyCount);
   setWaterTreatmentCount(waterTreatmentCount);
   setSewageDrainageCount(sewageDrainageCount);
   setTrashCollectingCount(trashCollectingCount);
   setFamilyIncomeCount(familyIncomeCount);
-  setEducationCount(educationCount);
 }
 
-export function ChartOptions(categories: string[]): ApexOptions {
+export function ChartOptions(categories: string[], total: number): ApexOptions {
     return {
         colors: ['#3C50E0', '#80CAEE'],
         chart: {
@@ -182,6 +155,15 @@ export function ChartOptions(categories: string[]): ApexOptions {
         },
         fill: {
           opacity: 1,
+        },
+
+        tooltip: {
+            y: {
+                formatter: (value: number) => {
+                    const percentage = total > 0 ? (value / total * 100).toFixed(2) : '0.00';
+                    return `${value.toLocaleString()} residências (${percentage}%)`;
+                }
+            }
         },
       };
 }

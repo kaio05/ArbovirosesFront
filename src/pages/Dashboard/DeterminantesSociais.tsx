@@ -1,17 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import DefaultLayout from "../../layout/DefaultLayout";
 import ColumnGraphic from "../../components/Charts/ColumnGraphic";
-import { ApexOptions } from "apexcharts";
 import { ChartOptions, mountDeterminantCollumData } from "../../service/components/Determinantes-Sociais/ChartOptions";
 import getApiData from "../../service/api/fetchApiData";
 import { SocialFactorsCard } from "../../components/Cards/SocialDeterminantsCard";
 
-const waterSupplyOptions: ApexOptions = ChartOptions(["Rede Encanada", "Poço", "Cisterna", "Carro Pipa", "Outro", "Não Informado", "Total"]);
-const waterTreatmentOptions: ApexOptions = ChartOptions(["Clorada", "Fervida", "Filtrada", "Mineral", "Sem Tratamento", "Não Informado", "Total"]);
-const sewageDrainageOptions: ApexOptions = ChartOptions(["Rede Coletora", "Fossa Séptica", "Fossa Rudimentar", "Direto para Rio/Mar", "Céu Aberto", "Outra Forma", "Não Informado", "Total"]);
-const trashCollectionOptions: ApexOptions = ChartOptions(["Coletado", "Queimado/Enterrado", "Céu Aberto", "Outro", "Não Informado", "Total"]);
-const familyIncomeOptions: ApexOptions = ChartOptions(["Sem renda", "1/4 Salário", "1/2 Salário", "1 Salário Mínimo", "2 Salário Mínimos", "3 Salários Mínimos", "4 Salários Mínimos", "> 4 Salários", "Não Informado", "Total"]);
-const educationOptions: ApexOptions = ChartOptions(["Nenhum", "Creche", "Pré-escola", "Classe de alfabetização", "1° ao 4°", "5° ao 8°", "EJA 1° ao 4°", "EJA 5° ao 8°", "Ensino fundamental completo", "Ensino fundamental especial", "Ensino médio", "Ensino médio especial", "Ensino médio EJA", "Superior/especialização/mestrado/doutorado", "Mobral", "Não Informado", "Total"]);
+
 
 const DeterminantesSociais: React.FC = () => {
 
@@ -24,36 +18,48 @@ const DeterminantesSociais: React.FC = () => {
     const [sewageDrainageData, setSewageDrainageData] = useState<any[]>([]);
     const [trashCollectionData, setTrashCollectionData] = useState<any[]>([]);
     const [familyIncomeData, setFamilyIncomeData] = useState<any[]>([]);
-    const [educationData, setEducationData] = useState<any[]>([]);
+    
 
     const [waterSupplyCount, setWaterSupplyCount] = useState<any>(0);
     const [waterTreatmentCount, setWaterTreatmentCount] = useState<any>(0);
     const [sewageDrainageCount, setSewageDrainageCount] = useState<any>(0);
     const [trashCollectingCount, setTrashCollectingCount] = useState<any>(0);
     const [familyIncomeCount, setFamilyIncomeCount] = useState<any>(0);
-    const [educationCount, setEducationCount] = useState<any>(0);
-
     const [loading, setLoading] = useState<boolean>(true);
+
+    const waterSupplyOptions = useMemo(() => ChartOptions(["Rede Encanada", "Poço", "Cisterna", "Carro Pipa", "Outro", "Não Informado", "Total"], waterSupplyData[0]?.data[6] ?? 0), [waterSupplyData]);
+    const waterTreatmentOptions = useMemo(() => ChartOptions(["Clorada", "Fervida", "Filtrada", "Mineral", "Sem Tratamento", "Não Informado", "Total"], waterTreatmentData[0]?.data[6] ?? 0), [waterTreatmentData]);
+    const sewageDrainageOptions = useMemo(() => ChartOptions(["Rede Coletora", "Fossa Séptica", "Fossa Rudimentar", "Direto para Rio/Mar", "Céu Aberto", "Outra Forma", "Não Informado", "Total"], sewageDrainageData[0]?.data[7] ?? 0), [sewageDrainageData]);
+    const trashCollectionOptions = useMemo(() => ChartOptions(["Coletado", "Queimado/Enterrado", "Céu Aberto", "Outro", "Não Informado", "Total"], trashCollectionData[0]?.data[5] ?? 0), [trashCollectionData]);
+    const familyIncomeOptions = useMemo(() => ChartOptions(["Sem renda", "1/4 Salário", "1/2 Salário", "1 Salário Mínimo", "2 Salário Mínimos", "3 Salários Mínimos", "4 Salários Mínimos", "> 4 Salários", "Não Informado", "Total"], familyIncomeData[0]?.data[9] ?? 0), [familyIncomeData]);
+    
+    const waterTreatmentLabels = ["Clorada", "Fervida", "Filtrada", "Mineral", "Sem Tratamento", "Não Informado"];
+
+    const mostCommonTreatmentLabel = useMemo(() => {
+        if (!waterTreatmentData[0]) return '';
+        const values = waterTreatmentData[0].data.slice(0, 6); // exclude Total
+        const maxIndex = values.indexOf(Math.max(...values));
+        return waterTreatmentLabels[maxIndex];
+        }, [waterTreatmentData]);
 
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
             try {
                 const apiData = await getApiData('');
-                // console.log(apiData);
+                console.log(apiData);
                 await Promise.allSettled([
                     mountDeterminantCollumData(apiData, setWaterSupplyData,
                     setWaterTreatmentData,
                     setSewageDrainageData,
                     setTrashCollectionData,
                     setFamilyIncomeData,
-                    setEducationData,
                     setWaterSupplyCount,
                     setWaterTreatmentCount,
                     setSewageDrainageCount,
                     setTrashCollectingCount,
                     setFamilyIncomeCount,
-                    setEducationCount,
+                    // setTotalHouses,
                     neighborhoodSelected)
                 ]);
             } catch (err) {
@@ -118,10 +124,10 @@ const DeterminantesSociais: React.FC = () => {
                     label="Rede encanada"
                 />
                 <SocialFactorsCard 
-                    title="Tratamento de água"
+                    title="Tratamento de água/armazenamento"
                     count={waterTreatmentCount}
                     totalHouses={waterTreatmentData[0].data[6]}
-                    label="Água clorada"
+                    label={mostCommonTreatmentLabel} 
                 />
                 <SocialFactorsCard 
                     title="Forma de escoamento"
@@ -141,12 +147,7 @@ const DeterminantesSociais: React.FC = () => {
                     totalHouses={familyIncomeData[0].data[9]}
                     label="1 salário mínimo"
                 />
-                <SocialFactorsCard 
-                    title="Escolaridade"
-                    count={educationCount}
-                    totalHouses={educationData[0].data[15]}
-                    label="ensino fundamental completo"
-                />
+               
             </div>
             {/* Graphs */}
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
@@ -184,13 +185,7 @@ const DeterminantesSociais: React.FC = () => {
                     series={familyIncomeData}
                 />
             </div>
-            <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>
-                <ColumnGraphic 
-                    title='Escolaridade'
-                    options={educationOptions}
-                    series={educationData}
-                />
-            </div>
+            
         </DefaultLayout>
     );
 };
