@@ -17,6 +17,7 @@ import { notificationsCountData } from '../../service/components/notificationsCo
 import BaseTable from '../../components/Tables/BaseTable';
 import { mountNeighborhoodData } from '../../service/components/NeighborhoodInfoTable';
 import { NeighborhoodInfo } from '../../components/Entity/NeighborhoodInfo';
+import { downloadNeighborhoodWeeklyPdfReport } from '../../service/components/NeighborhoodWeeklyPdfReport';
 
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
 const lineChartOptionsByEpidemiologicalWeekAccumulated: ApexOptions = countByEpidemiologicalWeekAccumulatedOptions();
@@ -33,6 +34,10 @@ const App: React.FC = () => {
   const [neighborhoodApiData, setNeighborhoodApiData] = useState<NeighborhoodInfo[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [finalWeek, setFinalWeek] = useState<string>('')
+  const [downloadError, setDownloadError] = useState<string | null>(null)
+  const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null)
+  const [downloadingPdf, setDownloadingPdf] = useState<boolean>(false)
   const [agravoSelected, setAgravoSelected] = useState<string>(() => {
     return localStorage.getItem('agravoSelected') || 'dengue';
   });
@@ -73,6 +78,42 @@ const App: React.FC = () => {
     setError(null);
     setLoading(true);
     window.location.reload();
+  };
+
+  const handleDownloadNeighborhoodReport = async () => {
+    setDownloadError(null);
+    setDownloadSuccess(null);
+
+    const normalizedWeek = finalWeek.trim();
+
+    if (!normalizedWeek) {
+      setDownloadError('Informe até qual semana epidemiológica o relatório deve ser gerado.');
+      return;
+    }
+
+    const parsedWeek = Number(normalizedWeek);
+
+    if (!Number.isInteger(parsedWeek) || parsedWeek < 1) {
+      setDownloadError('A semana epidemiológica precisa ser um número inteiro maior ou igual a 1.');
+      return;
+    }
+
+    setDownloadingPdf(true);
+
+    try {
+      await downloadNeighborhoodWeeklyPdfReport({
+        yearSelected,
+        agravoSelected,
+        finalWeek: normalizedWeek,
+      });
+
+      setDownloadSuccess(`Relatório em PDF das semanas 1 a ${normalizedWeek} gerado com sucesso.`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Não foi possível gerar o relatório PDF.';
+      setDownloadError(message);
+    } finally {
+      setDownloadingPdf(false);
+    }
   };
 
   if (loading) {
@@ -169,6 +210,61 @@ const App: React.FC = () => {
           />
         </div>
         <div className='xl:col-start-1 xl:col-end:13 col-span-12'>
+          <div className="mb-4 rounded-sm border border-stroke bg-white p-5 shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-black dark:text-white">
+                  Relatório PDF por bairro
+                </h3>
+                <p className="mt-1 text-sm text-body dark:text-bodydark">
+                  Gere a relação de bairros por semana epidemiológica usando os filtros atuais de ano e agravo.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="w-full sm:w-56">
+                  <label
+                    htmlFor="finalWeek"
+                    className="mb-2 block text-sm font-medium text-black dark:text-white"
+                  >
+                    Semana final
+                  </label>
+                  <input
+                    id="finalWeek"
+                    type="number"
+                    min="1"
+                    inputMode="numeric"
+                    placeholder="Ex: 14"
+                    value={finalWeek}
+                    onChange={(event) => setFinalWeek(event.target.value)}
+                    className="w-full rounded border border-stroke bg-transparent py-3 px-4 outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleDownloadNeighborhoodReport}
+                  disabled={downloadingPdf}
+                  className="flex h-[50px] min-w-[210px] items-center justify-center rounded bg-primary px-6 font-medium text-white transition hover:bg-opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {downloadingPdf ? 'Gerando PDF...' : 'Baixar relatório PDF'}
+                </button>
+              </div>
+            </div>
+
+            {downloadError && (
+              <p className="mt-3 text-sm font-medium text-red-600 dark:text-red-400">
+                {downloadError}
+              </p>
+            )}
+
+            {downloadSuccess && (
+              <p className="mt-3 text-sm font-medium text-green-600 dark:text-green-400">
+                {downloadSuccess}
+              </p>
+            )}
+          </div>
+
           <BaseTable 
             neighborhoodData={neighborhoodApiData}
           />
