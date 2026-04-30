@@ -12,6 +12,7 @@ const CarregarDados: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loadingData, setLoadingData] = useState<boolean>(false);
     const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
+    const [successMessage, setSuccessMessage] = useState<string>('Arquivo processado com sucesso!');
 
     function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
         setErrorMessage(null);
@@ -46,20 +47,36 @@ const CarregarDados: React.FC = () => {
 
         try {
             setLoadingData(true);
-            const response = await api.post('/savecsvdata', formData);
+            const response = await api.post('/uploadXlsx', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
 
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
                 setFile(null);
                 setFileName(null);
+                const responseBody = response.data;
+                const dataInfo = responseBody?.data;
+                let msg = responseBody?.message || 'Arquivo processado com sucesso!';
+                if (dataInfo !== undefined && dataInfo !== null) {
+                    if (typeof dataInfo === 'object') {
+                        const entries = Object.entries(dataInfo as Record<string, unknown>)
+                            .map(([k, v]) => `${k}: ${v}`)
+                            .join(', ');
+                        if (entries) msg += ` (${entries})`;
+                    } else {
+                        msg += ` — ${dataInfo} registros processados.`;
+                    }
+                }
+                setSuccessMessage(msg);
                 setOpenSuccessModal(true);
             } else if (response.status === 401) {
                 navigate('/auth/register');
             } else {
-                alert("Falha no envio do arquivo.");
+                setErrorMessage('Falha no envio do arquivo.');
             }
-        } catch (error) {
-            console.error("Erro ao enviar o arquivo:", error);
-            alert("Ocorreu um erro ao enviar o arquivo.");
+        } catch (error: any) {
+            const apiMessage = error?.response?.data?.message;
+            setErrorMessage(apiMessage || 'Ocorreu um erro ao enviar o arquivo.');
         } finally {
             setLoadingData(false);
         }
@@ -119,7 +136,7 @@ const CarregarDados: React.FC = () => {
             <SuccessModal
                 openModal={openSuccessModal}
                 handleModalClose={handleModalClose}
-                message="Arquivo carregado com sucesso!"
+                message={successMessage}
                 position="center"
             />
         </DefaultLayout>

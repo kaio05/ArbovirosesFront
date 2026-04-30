@@ -1,9 +1,22 @@
 import { ApexOptions } from "apexcharts";
 import getApiData from "../api/fetchApiData";
 
-export async function mountAgravoLineData(setAgravoLineSeries: Function, yearSelected: string, agravoSelected: string, bairro?: string) {
+export async function mountAgravoLineData(
+  setAgravoLineSeries: Function,
+  yearSelected: string,
+  agravoSelected: string,
+  bairro?: string,
+  semanaInicial?: string,
+  semanaFinal?: string,
+  setDengueTotal?: Function,
+  setZikaTotal?: Function,
+  setChikungunyaTotal?: Function,
+  setCategories?: Function
+) {
     const bairroParam = bairro ? `&bairro=${bairro}` : '';
-    const apiData = await getApiData(`/notifications/count/epidemiologicalWeek?year=${yearSelected}&agravo=${agravoSelected}${bairroParam}`)
+    const semanaInicialParam = semanaInicial ? `&semanaInicial=${semanaInicial}` : '';
+    const semanaFinalParam = semanaFinal ? `&semanaFinal=${semanaFinal}` : '';
+    const apiData = await getApiData(`/notifications/count/epidemiologicalWeek?year=${yearSelected}&agravo=${agravoSelected}${bairroParam}${semanaInicialParam}${semanaFinalParam}`)
 
     const dengueData = apiData.dengue.map((data: any) => {
       return data.casesCount
@@ -16,7 +29,20 @@ export async function mountAgravoLineData(setAgravoLineSeries: Function, yearSel
     const chikungunyaData = apiData.chikungunya.map((data: any) => {
       return data.casesCount
     })
-    
+
+    if (setDengueTotal) setDengueTotal(apiData.dengueTotal ?? null);
+    if (setZikaTotal) setZikaTotal(apiData.zikaTotal ?? null);
+    if (setChikungunyaTotal) setChikungunyaTotal(apiData.chikungunyaTotal ?? null);
+
+    if (setCategories) {
+      const hasWeekNumbers = apiData.dengue.length > 0 && 'epidemiologicalWeek' in apiData.dengue[0];
+      setCategories(
+        hasWeekNumbers
+          ? apiData.dengue.map((d: any) => d.epidemiologicalWeek)
+          : Array.from({ length: 53 }, (_, i) => i + 1)
+      );
+    }
+
     const dataObject = [{
       name: "Dengue",
       data: dengueData
