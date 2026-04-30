@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { IconHeartStar } from '@tabler/icons-react';
 import Logo from '../../images/logo/Logo.png';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -11,6 +12,7 @@ interface SidebarProps {
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const location = useLocation();
   const { pathname } = location;
+  const { isAuthenticated } = useAuth();
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
@@ -118,6 +120,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <li>
                 <NavLink
                   to="/"
+                  end
                   className={({ isActive }) =>
                     `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                       isActive && 'bg-graydark dark:bg-meta-4'
@@ -228,7 +231,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </NavLink>
               </li>
               {
-                localStorage.getItem('token') != undefined && (
+                isAuthenticated && (
                   <li>
                     <NavLink
                     to="/carregarDados"
@@ -306,10 +309,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <ul className="mb-6 flex flex-col gap-1.5">    
               {/* <!-- Authentication Menu Items - Direct Links --> */}
               {
-                localStorage.getItem('token') == undefined && (
+                !isAuthenticated && (
                   <li>
                     <NavLink
-                      to="/auth/Login"
+                      to="/auth/login"
                       className={({ isActive }) =>
                         `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           isActive && 'bg-graydark dark:bg-meta-4'
@@ -351,7 +354,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 )
               }
               {
-                localStorage.getItem('token') != undefined && (
+                isAuthenticated && (
                   <li>
                     <NavLink
                       to="/auth/registrar"
