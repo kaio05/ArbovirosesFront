@@ -18,34 +18,37 @@ const App: React.FC = () => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
 
+  const normalizeNeighborhoodKey = (name: string): string =>
+    name.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().trim();
+
   const cordsNeighborhoods: { [key: string]: [number, number] } = {
-    'ABOLIÇÃO': [-5.1870, -37.3440],
-    'AEROPORTO': [-5.2010, -37.3220],
-    'ALTO DA CONCEIÇÃO': [-5.1910, -37.3450],
-    'ALTO DE SÃO MANOEL': [-5.210125, -37.33342],
-    'BELO HORIZONTE': [-5.1890, -37.3240],
-    'BOA VISTA': [-5.1840, -37.3410],
-    'BOM JARDIM': [-5.1830, -37.3300],
-    'BOM JESUS': [-5.2020, -37.3590],
-    'BARROCAS': [-5.1920, -37.3360],
-    'CENTRO': [-5.1850, -37.3420],
-    'COSTA E SILVA': [-5.2040, -37.3580],
-    'DIX-SEPT ROSADO': [-5.1930, -37.3500],
-    'DOM JAIME CÂMARA': [-5.228459, -37.31464],
-    'DOZE ANOS': [-5.1820, -37.3380],
-    'ILHA DE SANTA LUZIA': [-5.1960, -37.3480],
-    'LAGOA DO MATO': [-5.1800, -37.3350],
-    'NOVA BETÂNIA': [-5.1760, -37.3400],
-    'PAREDÕES': [-5.1900, -37.3420],
-    'PLANALTO 13 DE MAIO': [-5.1990, -37.3490],
-    'PRESIDENTE COSTA E SILVA': [-5.1980, -37.3520],
-    'RINCÃO': [-5.2040, -37.3600],
-    'SANTA DELMIRA': [-5.1990, -37.3570],
-    'SANTA JÚLIA': [-5.1950, -37.3400],
-    'SANTO ANTÔNIO': [-5.1663, -37.3433],
-    'ALTO DO SUMARÉ': [-5.231820, -37.339779],
-    'SÃO MANOEL': [-5.1950, -37.3550],
-    'VINGT ROSADO': [-5.2000, -37.3620],
+    'ABOLICAO':                  [-5.1581, -37.3607],
+    'AEROPORTO':                 [-5.1970, -37.3695],
+    'ALTO DA CONCEICAO':         [-5.2005, -37.3480],
+    'ALTO DE SAO MANOEL':        [-5.210125, -37.33342],
+    'BELO HORIZONTE':            [-5.2106, -37.3574],
+    'BOA VISTA':                 [-5.1947, -37.3536],
+    'BOM JARDIM':                [-5.1792, -37.3381],
+    'BOM JESUS':                 [-5.2295, -37.3614],
+    'BARROCAS':                  [-5.1656, -37.3323],
+    'CENTRO':                    [-5.1850, -37.3420],
+    'COSTA E SILVA':             [-5.2104, -37.3143],
+    'DIX-SEPT ROSADO':           [-5.2015, -37.3649],
+    'DOM JAIME CAMARA':          [-5.228459, -37.31464],
+    'DOZE ANOS':                 [-5.1898, -37.3507],
+    'ILHA DE SANTA LUZIA':       [-5.2001, -37.3391],
+    'LAGOA DO MATO':             [-5.2052, -37.3601],
+    'NOVA BETANIA':              [-5.1788, -37.3667],
+    'PAREDOES':                  [-5.1800, -37.3306],
+    'PLANALTO 13 DE MAIO':       [-5.2199, -37.3384],
+    'PRESIDENTE COSTA E SILVA':  [-5.1583, -37.3602],
+    'RINCAO':                    [-5.1971, -37.2880],
+    'SANTA DELMIRA':             [-5.1524, -37.3562],
+    'SANTA JULIA':               [-5.1354, -37.3282],
+    'SANTO ANTONIO':             [-5.1663, -37.3433],
+    'ALTO DO SUMARE':            [-5.231820, -37.339779],
+    'SAO MANOEL':                [-5.2065, -37.3351],
+    'VINGT ROSADO':              [-5.2019, -37.3033],
   };
   
   useEffect(() => {
@@ -73,7 +76,7 @@ const App: React.FC = () => {
         .map((neighborhood: { nomeBairro: string; casosReportados: number; }) => {
           if (!neighborhood || !neighborhood.nomeBairro) return null;
           
-          const neighborhoodName = String(neighborhood.nomeBairro).toUpperCase().trim();
+          const neighborhoodName = normalizeNeighborhoodKey(String(neighborhood.nomeBairro));
           const coords = cordsNeighborhoods[neighborhoodName];
           
           if (!coords || !Array.isArray(coords) || coords.length !== 2) {
