@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { SuccessModal } from '../../components/Modals/SuccessModal';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,13 @@ const CarregarDados: React.FC = () => {
     const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<string>('Arquivo processado com sucesso!');
     const [asyncPending, setAsyncPending] = useState<boolean>(false);
+    const [latestDate, setLatestDate] = useState<string | null>(null);
+
+    useEffect(() => {
+        api.get('/notifications/latest-date')
+            .then(res => setLatestDate(res.data?.data ?? null))
+            .catch(() => setLatestDate(null));
+    }, []);
 
     function handleTypeChange(type: FileType) {
         setFileType(type);
@@ -109,7 +116,19 @@ const CarregarDados: React.FC = () => {
     return (
         <DefaultLayout>
             <div className="mx-auto p-6 bg-white shadow-md rounded-lg">
-                <h2 className="text-2xl font-semibold text-center text-indigo-600 mb-6">Importar Notificações</h2>
+                <h2 className="text-2xl font-semibold text-center text-indigo-600 mb-4">Importar Notificações</h2>
+
+                <div className="flex justify-center mb-6">
+                    <div className="inline-flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm text-indigo-700">
+                        <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {latestDate
+                            ? <span>Base de dados atualizada até <strong>{latestDate}</strong></span>
+                            : <span className="text-indigo-400">Nenhum dado cadastrado</span>
+                        }
+                    </div>
+                </div>
 
                 {/* Seleção do tipo de arquivo */}
                 <div className="mb-6">
