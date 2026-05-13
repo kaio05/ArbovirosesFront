@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import api from '../../service/api/Api';
 import { SuccessModal } from '../../components/Modals/SuccessModal';
-import gerarArquivoComErros from '../../components/NotificationsWithError/NotificationsWithError';
 import { downloadErrorsPdfReport } from '../../service/components/ErrorsPdfReport';
 import { DatePickerBR } from '../../components/Forms/Inputs/DatePickerBR';
 
@@ -96,7 +95,7 @@ export default function GerenciarDados() {
     const [openSuccessModal, setOpenSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage]     = useState('Arquivo processado com sucesso!');
     const [asyncPending, setAsyncPending]   = useState(false);
-    const [latestDate, setLatestDate]       = useState<string | null>(null);
+    const [latestDates, setLatestDates] = useState<{ dengue: string | null; chikungunya: string | null; zika: string | null } | null>(null);
 
     // Filtros erros
     const [category, setCategory]   = useState('');
@@ -116,8 +115,8 @@ export default function GerenciarDados() {
 
     useEffect(() => {
         api.get('/notifications/latest-date')
-            .then(res => setLatestDate(res.data?.data ?? null))
-            .catch(() => setLatestDate(null));
+            .then(res => setLatestDates(res.data?.data ?? null))
+            .catch(() => setLatestDates(null));
     }, []);
 
     function handleTypeChange(type: FileType) {
@@ -283,16 +282,25 @@ export default function GerenciarDados() {
                 {/* Aba Upload */}
                 {tab === 'upload' && (
                     <div className="bg-white shadow-md rounded-lg p-6">
-                        <div className="flex justify-center mb-6">
-                            <div className="inline-flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm text-indigo-700">
-                                <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                {latestDate
-                                    ? <span>Base de dados atualizada até <strong>{latestDate}</strong></span>
-                                    : <span className="text-indigo-400">Nenhum dado cadastrado</span>
-                                }
-                            </div>
+                        <div className="flex flex-wrap justify-center gap-3 mb-6">
+                            {[
+                                { key: 'dengue'      as const, label: 'Dengue',       color: 'border-orange-200 bg-orange-50 text-orange-700' },
+                                { key: 'chikungunya' as const, label: 'Chikungunya',  color: 'border-purple-200 bg-purple-50 text-purple-700' },
+                                { key: 'zika'        as const, label: 'Zika',         color: 'border-teal-200   bg-teal-50   text-teal-700'   },
+                            ].map(({ key, label, color }) => (
+                                <div key={key} className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${color}`}>
+                                    <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>
+                                        <strong>{label}</strong>
+                                        {latestDates?.[key]
+                                            ? <> atualizado até <strong>{latestDates[key]}</strong></>
+                                            : <span className="opacity-60"> — sem dados</span>
+                                        }
+                                    </span>
+                                </div>
+                            ))}
                         </div>
 
                         <div className="mb-6">
@@ -362,12 +370,6 @@ export default function GerenciarDados() {
                                     </svg>
                                 )}
                                 Enviar Arquivo
-                            </button>
-                            <button
-                                onClick={gerarArquivoComErros}
-                                className="flex items-center justify-center bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition"
-                            >
-                                Verificar Erros
                             </button>
                         </div>
                     </div>
