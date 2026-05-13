@@ -7,13 +7,13 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import SignIn from './pages/Authentication/Login';
 import SignUp from './pages/Authentication/Register';
 import DadosGerais from './pages/Dashboard/DadosGerais';
-import CarregarDados from './pages/Dashboard/CarregarDados';
 import PrevisaoDeCasos from './pages/Dashboard/PrevisaoDeCasos';
 import DadosGeograficos from './pages/Dashboard/DadosGeograficos';
 import DashboardBairro from './pages/Dashboard/DashboardBairro';
 import CarregarLira from './pages/Lira/CarregarLira';
 import DashboardLira from './pages/Lira/DashboardLira';
 import DeterminantesSociais from './pages/Dashboard/DeterminantesSociais';
+import GerenciarDados from './pages/Dashboard/GerenciarDados';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,14 +50,18 @@ function App() {
             </>
           }
         />
-        <Route 
-          path="/carregarDados"
+        <Route
+          path="/gerenciarDados"
           element={
             <ProtectedRoute>
-              <PageTitle title="Carregar dados"/>
-              <CarregarDados />
+              <PageTitle title="Gerir Notificações" />
+              <GerenciarDados />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/carregarDados"
+          element={<Navigate to="/gerenciarDados" replace />}
         />
         <Route 
           path="/dashboard/previsaoCasos"
