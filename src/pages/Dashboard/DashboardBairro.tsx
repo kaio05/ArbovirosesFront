@@ -13,7 +13,10 @@ import { CountCard } from '../../components/Cards/CountCard';
 import { notificationsCountData } from '../../service/components/notificationsCount';
 import { countByEpidemiologicalWeekAccumulatedOptions, mountAgravoLineAccumulatedData } from '../../service/components/EpidemiologicalWeekAccumulated';
 import AgravoAccumulatedLineChart from '../../components/Charts/AgravoAccumulatedLineChart';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import BairroSelector from '../../components/Forms/SelectGroup/BairroSelector';
+import { mountNeighborhoodData } from '../../service/components/NeighborhoodInfoTable';
+import { NeighborhoodInfo } from '../../components/Entity/NeighborhoodInfo';
 
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
 const lineChartOptionsByEpidemiologicalWeekAccumulated: ApexOptions = countByEpidemiologicalWeekAccumulatedOptions();
@@ -21,7 +24,21 @@ const donutChartOptionsbySexo: ApexOptions = countBySexoOptions();
 const columnGraphicOptions: ApexOptions = countByAgeRangeOptions();
 
 const DashboardBairro: React.FC = () => {
-  const bairro = useLocation().state?.bairro;
+   const bairro = useLocation().state?.bairro;
+  const bairrosDoState = useLocation().state?.bairros;
+  const navigate = useNavigate();
+
+  const [bairros, setBairros] = useState<string[]>(bairrosDoState ?? []);
+  const [neighborhoodApiData, setNeighborhoodApiData] = useState<NeighborhoodInfo[]>([]);
+
+
+  const handleBairroChange = (novoBairro: string) => {
+    if (novoBairro) {
+      navigate('/dashboard/bairro', { state: { bairro: novoBairro } }); // navega para a pagina do bairro selecionado
+    } else {
+      navigate('/'); // volta para o dashboarde
+    }
+  };
 
   const [agravoLineSeries, setAgravoLineSeries] = useState<any>([]);
   const [countBySexoSeries, setCountBySexoSeries] = useState<any>([]);
@@ -34,8 +51,30 @@ const DashboardBairro: React.FC = () => {
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
-  
+    useEffect(() => {
+    if (bairros.length === 0) {
+      mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected);
+    }
+  }, []);
+    useEffect(() => {
+    if (bairros.length === 0) {
+      mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected);
+    }
+  }, []);
+
+  // atualiza o estado de bairros quando os dados chegarem da API
   useEffect(() => {
+    if (neighborhoodApiData.length > 0) {
+      setBairros(
+        neighborhoodApiData
+          .map((n) => n.nomeBairro)
+          .filter(Boolean)
+          .sort()
+      );
+    }
+  }, [neighborhoodApiData]);
+  useEffect(() => {
+    
     if (bairro) {
       mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected, bairro);
       mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected, bairro);
@@ -67,6 +106,11 @@ const DashboardBairro: React.FC = () => {
 
         {/* Lado Direito: Filtros */}
         <div className='flex gap-x-4 items-center'>
+            <BairroSelector
+              bairroSelected={bairro ?? ''}
+              setBairroSelected={handleBairroChange}
+              bairros={bairros}
+/>
             <YearSelector 
               yearSelected={yearSelected}
               setYearSelected={setYearSelected}

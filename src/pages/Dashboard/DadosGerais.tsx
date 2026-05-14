@@ -18,6 +18,8 @@ import BaseTable from '../../components/Tables/BaseTable';
 import { mountNeighborhoodData } from '../../service/components/NeighborhoodInfoTable';
 import { NeighborhoodInfo } from '../../components/Entity/NeighborhoodInfo';
 import { downloadNeighborhoodWeeklyPdfReport } from '../../service/components/NeighborhoodWeeklyPdfReport';
+import BairroSelector from '../../components/Forms/SelectGroup/BairroSelector';
+import { useNavigate } from 'react-router-dom';
 
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
 const lineChartOptionsByEpidemiologicalWeekAccumulated: ApexOptions = countByEpidemiologicalWeekAccumulatedOptions();
@@ -25,6 +27,8 @@ const donutChartOptionsbySexo: ApexOptions = countBySexoOptions();
 const columnGraphicOptions: ApexOptions = countByAgeRangeOptions();
 
 const App: React.FC = () => {
+  const navigate = useNavigate();
+
   const [agravoLineSeries, setAgravoLineSeries] = useState<any>([])
   const [agravoLineAccumulatedSeries, setAgravoLineAccumulatedSeries] = useState<any>([])
   const [countBySexoSeries, setCountBySexoSeries] = useState<any>([])
@@ -45,22 +49,44 @@ const App: React.FC = () => {
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
+  const bairrosDisponiveis = neighborhoodApiData
+    .map((n) => n.nomeBairro)
+    .filter(Boolean)
+    .sort();
+
+  const handleBairroChange = (bairro: string) => {
+    if (bairro) {
+      navigate('/dashboard/bairro', { 
+        state: { 
+          bairro,
+          bairros: bairrosDisponiveis
+        } 
+      });
+    }
+  };
+  
   
   useEffect(() => {
+  console.log('Bairros da API:', neighborhoodApiData.map(n => n.nomeBairro));
+}, [neighborhoodApiData]);
+  useEffect(() => {
+
     const loadData = async () => {
       setLoading(true);
       setError(null);
+
+      
       
       try {
         await Promise.allSettled([
-          mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected),
-          mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoSelected),
-          mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected),
-          mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected),
-          mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected),
-          affectedNeighborhoodCount(setAffectedNeighborhoods, yearSelected, agravoSelected),
-          notificationsCountData(setNotificationsCount, yearSelected, agravoSelected),
-        ]);
+        mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected),
+        mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoSelected),
+        mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected),
+        mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected),
+        mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected),
+        affectedNeighborhoodCount(setAffectedNeighborhoods, yearSelected, agravoSelected),
+        notificationsCountData(setNotificationsCount, yearSelected, agravoSelected),
+      ]);
         
         localStorage.setItem('yearSelected', yearSelected);
         localStorage.setItem('agravoSelected', agravoSelected);
@@ -80,6 +106,7 @@ const App: React.FC = () => {
     setLoading(true);
     window.location.reload();
   };
+  
 
   const handleDownloadNeighborhoodReport = async () => {
     setDownloadError(null);
@@ -173,7 +200,12 @@ const App: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className='flex flex-wrap justify-end gap-x-2 gap-y-2 items-end'>
+        <div className='flex flex-wrap justify-end gap-x-2 gap-y-2 items-end'>
+          <BairroSelector
+  bairroSelected=""
+  setBairroSelected={handleBairroChange}
+  bairros={bairrosDisponiveis}
+/>
         <YearSelector
           yearSelected={yearSelected}
           setYearSelected={setYearSelected}
