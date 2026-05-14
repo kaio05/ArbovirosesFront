@@ -14,6 +14,7 @@ import CarregarLira from './pages/Lira/CarregarLira';
 import DashboardLira from './pages/Lira/DashboardLira';
 import DeterminantesSociais from './pages/Dashboard/DeterminantesSociais';
 import GerenciarDados from './pages/Dashboard/GerenciarDados';
+import { DashboardContextProvider } from './contexts/DashboardContext';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,112 +32,114 @@ function App() {
     <Loader />
   ) : (
     <>
-      <Routes>
-        <Route
-          index
-          element={
-            <>
-              <PageTitle title="Dashboard Arboviroses" />
-              <DadosGerais />
-            </>
-          }
-        />
-        <Route
-          path='/dashboard/dadosGerais'
-          element={
-            <>
-              <PageTitle title="Dashboard Arboviroses" />
-              <DadosGerais />
-            </>
-          }
-        />
-        <Route
-          path="/gerenciarDados"
-          element={
-            <ProtectedRoute>
-              <PageTitle title="Gerir Notificações" />
-              <GerenciarDados />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/carregarDados"
-          element={<Navigate to="/gerenciarDados" replace />}
-        />
-        <Route 
-          path="/dashboard/previsaoCasos"
-          element={
-            <>
-              <PageTitle title="Previsão de casos"/>
-              <PrevisaoDeCasos />
-            </>
-          }
-        />
-        <Route 
-          path="/dashboard/determinantesSociais"
-          element={
-            <>
-              <PageTitle title="Determinantes sociais"/>
-              <DeterminantesSociais />
-            </>
-          }
-        />
-        <Route 
-          path="/dashboard/dadosGeograficos"
-          element={
-            <>
-              <PageTitle title="Dados geográficos"/>
-              <DadosGeograficos />
-            </>
-          }
-        />
-        <Route 
-          path="/dashboard/bairro"
-          element={
-            <>
-              <PageTitle title="Dados do Bairro"/>
-              <DashboardBairro />
-            </>
-          }
-        />
-        <Route
-          path="/lira/carregar"
-          element={
-            <ProtectedRoute>
-              <PageTitle title="Carregar Dados LIRA" />
-              <CarregarLira />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lira/dashboard"
-          element={
-            <>
-              <PageTitle title="Dashboard LIRA" />
-              <DashboardLira />
-            </>
-          }
-        />
-        <Route
-          path="/auth/login"
-          element={
-            <>
-              <PageTitle title="Login" />
-              <SignIn />
-            </>
-          }
-        />
-        <Route
-          path="/auth/registrar"
-          element={
-            <ProtectedRoute>
-              <PageTitle title="Registrar" />
-              <SignUp />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <DashboardContextProvider>
+        <Routes>
+          <Route
+            index
+            element={
+              <>
+                <PageTitle title="Dashboard Arboviroses" />
+                <DadosGerais />
+              </>
+            }
+            />
+          <Route
+            path='/dashboard/dadosGerais'
+            element={
+              <>
+                <PageTitle title="Dashboard Arboviroses" />
+                <DadosGerais />
+              </>
+            }
+          />
+          <Route
+            path="/gerenciarDados"
+            element={
+              <ProtectedRoute>
+                <PageTitle title="Gerir Notificações" />
+                <GerenciarDados />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/carregarDados"
+            element={<Navigate to="/gerenciarDados" replace />}
+          />
+          <Route 
+            path="/dashboard/previsaoCasos"
+            element={
+              <>
+                <PageTitle title="Previsão de casos"/>
+                <PrevisaoDeCasos />
+              </>
+            }
+          />
+          <Route 
+            path="/dashboard/determinantesSociais"
+            element={
+              <>
+                <PageTitle title="Determinantes sociais"/>
+                <DeterminantesSociais />
+              </>
+            }
+          />
+          <Route 
+            path="/dashboard/dadosGeograficos"
+            element={
+              <>
+                <PageTitle title="Dados geográficos"/>
+                <DadosGeograficos />
+              </>
+            }
+          />
+          <Route 
+            path="/dashboard/bairro"
+            element={
+              <>
+                <PageTitle title="Dados do Bairro"/>
+                <DashboardBairro />
+              </>
+            }
+          />
+          <Route
+            path="/lira/carregar"
+            element={
+              <ProtectedRoute>
+                <PageTitle title="Carregar Dados LIRA" />
+                <CarregarLira />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lira/dashboard"
+            element={
+              <>
+                <PageTitle title="Dashboard LIRA" />
+                <DashboardLira />
+              </>
+            }
+          />
+          <Route
+            path="/auth/login"
+            element={
+              <>
+                <PageTitle title="Login" />
+                <SignIn />
+              </>
+            }
+          />
+          <Route
+            path="/auth/registrar"
+            element={
+              <ProtectedRoute>
+                <PageTitle title="Registrar" />
+                <SignUp />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </DashboardContextProvider>
     </>
   );
 }
