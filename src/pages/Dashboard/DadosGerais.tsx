@@ -9,6 +9,7 @@ import { countBySexoOptions, mountDonutCountBySexo } from '../../service/compone
 import { countByAgeRangeOptions, mountColumnCountByAgeRange } from '../../service/components/CountByAgeRange';
 import YearSelector from '../../components/Forms/SelectGroup/YearSelector';
 import AgravoSelector from '../../components/Forms/SelectGroup/AgravoSelector';
+import DashboardScopeSelector from '../../components/Forms/SelectGroup/DashboardScopeSelector';
 import AgravoAccumulatedLineChart from '../../components/Charts/AgravoAccumulatedLineChart';
 import { countByEpidemiologicalWeekAccumulatedOptions, mountAgravoLineAccumulatedData } from '../../service/components/EpidemiologicalWeekAccumulated';
 import { CountCard } from '../../components/Cards/CountCard';
@@ -18,6 +19,7 @@ import BaseTable from '../../components/Tables/BaseTable';
 import { mountNeighborhoodData } from '../../service/components/NeighborhoodInfoTable';
 import { NeighborhoodInfo } from '../../components/Entity/NeighborhoodInfo';
 import { downloadNeighborhoodWeeklyPdfReport } from '../../service/components/NeighborhoodWeeklyPdfReport';
+import { DashboardScope } from '../../service/components/dashboardQueryParams';
 
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
 const lineChartOptionsByEpidemiologicalWeekAccumulated: ApexOptions = countByEpidemiologicalWeekAccumulatedOptions();
@@ -45,6 +47,10 @@ const App: React.FC = () => {
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
+  const [scopeSelected, setScopeSelected] = useState<DashboardScope>(() => {
+    const savedScope = localStorage.getItem('dashboardScopeSelected');
+    return savedScope === 'confirmados' || savedScope === 'obitos' ? savedScope : 'notificados';
+  });
   
   useEffect(() => {
     const loadData = async () => {
@@ -53,17 +59,18 @@ const App: React.FC = () => {
       
       try {
         await Promise.allSettled([
-          mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected),
-          mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoSelected),
-          mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected),
-          mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected),
-          mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected),
-          affectedNeighborhoodCount(setAffectedNeighborhoods, yearSelected, agravoSelected),
-          notificationsCountData(setNotificationsCount, yearSelected, agravoSelected),
+          mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected, undefined, scopeSelected),
+          mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoSelected, undefined, scopeSelected),
+          mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected, undefined, scopeSelected),
+          mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected, undefined, scopeSelected),
+          mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected, scopeSelected),
+          affectedNeighborhoodCount(setAffectedNeighborhoods, yearSelected, agravoSelected, scopeSelected),
+          notificationsCountData(setNotificationsCount, yearSelected, agravoSelected, undefined, scopeSelected),
         ]);
         
         localStorage.setItem('yearSelected', yearSelected);
         localStorage.setItem('agravoSelected', agravoSelected);
+        localStorage.setItem('dashboardScopeSelected', scopeSelected);
       } catch (err) {
         console.error('Erro ao carregar dados:', err);
         setError('Não foi possível carregar os dados. Por favor, tente novamente.');
@@ -73,7 +80,7 @@ const App: React.FC = () => {
     };
 
     loadData();
-  }, [yearSelected, agravoSelected])
+  }, [yearSelected, agravoSelected, scopeSelected])
 
   const handleRetry = () => {
     setError(null);
@@ -182,10 +189,14 @@ const App: React.FC = () => {
           agravoSelected={agravoSelected}
           setAgravoSelected={setAgravoSelected}
         />
+        <DashboardScopeSelector
+          scopeSelected={scopeSelected}
+          setScopeSelected={setScopeSelected}
+        />
       </div>
       <div className='flex flex-col md:flex-row gap-4'>
         <CountCard
-          title="Notificações"
+          title={scopeSelected === 'confirmados' ? 'Casos confirmados' : scopeSelected === 'obitos' ? 'Óbitos' : 'Notificações'}
           count={notificationsCount}
         />
         <CountCard 

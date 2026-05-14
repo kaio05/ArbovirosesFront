@@ -1,9 +1,21 @@
 import { ApexOptions } from "apexcharts";
 import getApiData from "../api/fetchApiData";
+import { buildDashboardQueryParams, DashboardScope } from "./dashboardQueryParams";
 
-export async function mountAgravoLineAccumulatedData(setAgravoLineSeries: Function, yearSelected: string, agravoSelected: string, bairro?: string) {
-    const bairroParam = bairro ? `&bairro=${bairro}` : '';
-    const apiData = await getApiData(`/notifications/count/epidemiologicalWeek/accumulated?year=${yearSelected}&agravo=${agravoSelected}${bairroParam}`)
+export async function mountAgravoLineAccumulatedData(
+  setAgravoLineSeries: Function,
+  yearSelected: string,
+  agravoSelected: string,
+  bairro?: string,
+  scope: DashboardScope = 'notificados'
+) {
+    const queryParams = buildDashboardQueryParams({
+      yearSelected,
+      agravoSelected,
+      bairro,
+      scope,
+    });
+    const apiData = await getApiData(`/notifications/count/epidemiologicalWeek/accumulated?${queryParams}`)
 
     const dengueData = apiData.dengue.map((data: any) => {
       return data.casesCount
@@ -90,10 +102,6 @@ export function countByEpidemiologicalWeekAccumulatedOptions() : ApexOptions {
             width: [2, 2],
             curve: 'straight',
         },
-        // labels: {
-        //   show: false,
-        //   position: "top",
-        // },
         grid: {
             xaxis: {
             lines: {

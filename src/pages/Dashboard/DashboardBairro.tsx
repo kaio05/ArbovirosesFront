@@ -9,11 +9,13 @@ import { countBySexoOptions, mountDonutCountBySexo } from '../../service/compone
 import { countByAgeRangeOptions, mountColumnCountByAgeRange } from '../../service/components/CountByAgeRange';
 import YearSelector from '../../components/Forms/SelectGroup/YearSelector';
 import AgravoSelector from '../../components/Forms/SelectGroup/AgravoSelector';
+import DashboardScopeSelector from '../../components/Forms/SelectGroup/DashboardScopeSelector';
 import { CountCard } from '../../components/Cards/CountCard';
 import { notificationsCountData } from '../../service/components/notificationsCount';
 import { countByEpidemiologicalWeekAccumulatedOptions, mountAgravoLineAccumulatedData } from '../../service/components/EpidemiologicalWeekAccumulated';
 import AgravoAccumulatedLineChart from '../../components/Charts/AgravoAccumulatedLineChart';
 import { useLocation } from 'react-router-dom';
+import { DashboardScope } from '../../service/components/dashboardQueryParams';
 
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
 const lineChartOptionsByEpidemiologicalWeekAccumulated: ApexOptions = countByEpidemiologicalWeekAccumulatedOptions();
@@ -34,16 +36,21 @@ const DashboardBairro: React.FC = () => {
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
+  const [scopeSelected, setScopeSelected] = useState<DashboardScope>(() => {
+    const savedScope = localStorage.getItem('dashboardScopeSelected');
+    return savedScope === 'confirmados' || savedScope === 'obitos' ? savedScope : 'notificados';
+  });
   
   useEffect(() => {
     if (bairro) {
-      mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected, bairro);
-      mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected, bairro);
-      mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected, bairro);
-      notificationsCountData(setNotificationsCount, yearSelected, agravoSelected, bairro);
-      mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoSelected, bairro);
+      mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected, bairro, scopeSelected);
+      mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected, bairro, scopeSelected);
+      mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected, bairro, scopeSelected);
+      notificationsCountData(setNotificationsCount, yearSelected, agravoSelected, bairro, scopeSelected);
+      mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoSelected, bairro, scopeSelected);
+      localStorage.setItem('dashboardScopeSelected', scopeSelected);
     }
-  }, [yearSelected, agravoSelected, bairro]);
+  }, [yearSelected, agravoSelected, bairro, scopeSelected]);
 
   return (
     <DefaultLayout>
@@ -75,13 +82,17 @@ const DashboardBairro: React.FC = () => {
               agravoSelected={agravoSelected}
               setAgravoSelected={setAgravoSelected}
             />
+            <DashboardScopeSelector
+              scopeSelected={scopeSelected}
+              setScopeSelected={setScopeSelected}
+            />
         </div>
       </div>
       {/* ========== FIM DO CABEÇALHO ========== */}
 
       <div className='flex flex-col md:flex-row gap-4'>
         <CountCard
-          title="Notificações"
+          title={scopeSelected === 'confirmados' ? 'Casos confirmados' : scopeSelected === 'obitos' ? 'Óbitos' : 'Notificações'}
           count={notificationsCount}
         />
       </div>

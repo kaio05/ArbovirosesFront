@@ -1,9 +1,21 @@
 import { ApexOptions } from "apexcharts";
 import getApiData from "../api/fetchApiData";
+import { buildDashboardQueryParams, DashboardScope } from "./dashboardQueryParams";
 
-export async function mountDonutCountBySexo(setCountBySexoSeries: Function, yearSelected: string, agravoSelected: string, bairro?: string) {
-    const bairroParam = bairro ? `&bairro=${bairro}` : '';
-    const apiData = await getApiData(`/notifications/count/sexo?year=${yearSelected}&agravo=${agravoSelected}${bairroParam}`)
+export async function mountDonutCountBySexo(
+  setCountBySexoSeries: Function,
+  yearSelected: string,
+  agravoSelected: string,
+  bairro?: string,
+  scope: DashboardScope = 'notificados'
+) {
+    const queryParams = buildDashboardQueryParams({
+      yearSelected,
+      agravoSelected,
+      bairro,
+      scope,
+    });
+    const apiData = await getApiData(`/notifications/count/sexo?${queryParams}`)
     
     setCountBySexoSeries([apiData.masculine, apiData.feminine]);
   }
