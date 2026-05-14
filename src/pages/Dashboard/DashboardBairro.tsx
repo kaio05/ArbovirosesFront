@@ -18,28 +18,21 @@ import BairroSelector from '../../components/Forms/SelectGroup/BairroSelector';
 import { mountNeighborhoodData } from '../../service/components/NeighborhoodInfoTable';
 import { NeighborhoodInfo } from '../../components/Entity/NeighborhoodInfo';
 
+
+
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
 const lineChartOptionsByEpidemiologicalWeekAccumulated: ApexOptions = countByEpidemiologicalWeekAccumulatedOptions();
 const donutChartOptionsbySexo: ApexOptions = countBySexoOptions();
 const columnGraphicOptions: ApexOptions = countByAgeRangeOptions();
 
 const DashboardBairro: React.FC = () => {
-   const bairro = useLocation().state?.bairro;
+  const bairro = useLocation().state?.bairro;
   const bairrosDoState = useLocation().state?.bairros;
   const navigate = useNavigate();
 
+
   const [bairros, setBairros] = useState<string[]>(bairrosDoState ?? []);
   const [neighborhoodApiData, setNeighborhoodApiData] = useState<NeighborhoodInfo[]>([]);
-
-
-  const handleBairroChange = (novoBairro: string) => {
-    if (novoBairro) {
-      navigate('/dashboard/bairro', { state: { bairro: novoBairro } }); // navega para a pagina do bairro selecionado
-    } else {
-      navigate('/'); // volta para o dashboarde
-    }
-  };
-
   const [agravoLineSeries, setAgravoLineSeries] = useState<any>([]);
   const [countBySexoSeries, setCountBySexoSeries] = useState<any>([]);
   const [ageRangeCategories, setAgeRangeCategories] = useState<any>([]);
@@ -51,19 +44,25 @@ const DashboardBairro: React.FC = () => {
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
-    useEffect(() => {
-    if (bairros.length === 0) {
-      mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected);
-    }
-  }, []);
-    useEffect(() => {
-    if (bairros.length === 0) {
-      mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected);
-    }
-  }, []);
 
-  // atualiza o estado de bairros quando os dados chegarem da API
-  useEffect(() => {
+  const handleBairroChange = (novoBairro: string) => {
+    if (novoBairro) {
+      navigate('/dashboard/bairro', { state: { bairro: novoBairro, bairros } });
+    } else {
+      navigate('/');
+    }
+  };
+
+    useEffect(() => {
+    if (bairros.length === 0) {
+      mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected);
+    }
+  }, []);
+   
+
+  
+    
+  useEffect(() => {   // atualiza bairros quando dados chegarem da API
     if (neighborhoodApiData.length > 0) {
       setBairros(
         neighborhoodApiData
@@ -73,8 +72,9 @@ const DashboardBairro: React.FC = () => {
       );
     }
   }, [neighborhoodApiData]);
+  
   useEffect(() => {
-    
+
     if (bairro) {
       mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected, bairro);
       mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected, bairro);
@@ -110,7 +110,7 @@ const DashboardBairro: React.FC = () => {
               bairroSelected={bairro ?? ''}
               setBairroSelected={handleBairroChange}
               bairros={bairros}
-/>
+            />
             <YearSelector 
               yearSelected={yearSelected}
               setYearSelected={setYearSelected}
@@ -134,14 +134,14 @@ const DashboardBairro: React.FC = () => {
         <div className="col-start-1 col-end-13">
           <AgravoLineChart 
             options={lineChartOptionsByEpidemiologicalWeek}
-            series={agravoLineSeries}
+            series={agravoLineSeries ?? []}
           />
         </div>
 
         <div className="col-start-1 col-end-13">
           <AgravoAccumulatedLineChart 
             options={lineChartOptionsByEpidemiologicalWeekAccumulated}
-            series={agravoLineAccumulatedSeries}
+            series={agravoLineAccumulatedSeries ?? []}
           />
         </div>
 
@@ -149,7 +149,7 @@ const DashboardBairro: React.FC = () => {
           <ColumnGraphic 
             title='Contagem de casos por faixa etária'
             options={columnGraphicOptions}
-            series={ageRangeCategories}
+            series={ageRangeCategories ?? []}
           />
         </div>
 
@@ -157,7 +157,7 @@ const DashboardBairro: React.FC = () => {
           <DonutChart 
             chartTitle='Contagem de casos por sexo'
             options={donutChartOptionsbySexo}
-            series={countBySexoSeries}
+            series={countBySexoSeries ?? []}
           />
         </div>
       </div>

@@ -21,6 +21,7 @@ import { downloadNeighborhoodWeeklyPdfReport } from '../../service/components/Ne
 import BairroSelector from '../../components/Forms/SelectGroup/BairroSelector';
 import { useNavigate } from 'react-router-dom';
 
+
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
 const lineChartOptionsByEpidemiologicalWeekAccumulated: ApexOptions = countByEpidemiologicalWeekAccumulatedOptions();
 const donutChartOptionsbySexo: ApexOptions = countBySexoOptions();
@@ -28,7 +29,6 @@ const columnGraphicOptions: ApexOptions = countByAgeRangeOptions();
 
 const App: React.FC = () => {
   const navigate = useNavigate();
-
   const [agravoLineSeries, setAgravoLineSeries] = useState<any>([])
   const [agravoLineAccumulatedSeries, setAgravoLineAccumulatedSeries] = useState<any>([])
   const [countBySexoSeries, setCountBySexoSeries] = useState<any>([])
@@ -49,7 +49,8 @@ const App: React.FC = () => {
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
-  const bairrosDisponiveis = neighborhoodApiData
+
+    const bairrosDisponiveis = (neighborhoodApiData ?? [])
     .map((n) => n.nomeBairro)
     .filter(Boolean)
     .sort();
@@ -64,7 +65,6 @@ const App: React.FC = () => {
       });
     }
   };
-  
   
   useEffect(() => {
   console.log('Bairros da API:', neighborhoodApiData.map(n => n.nomeBairro));
@@ -200,12 +200,12 @@ const App: React.FC = () => {
 
   return (
     <DefaultLayout>
-        <div className='flex flex-wrap justify-end gap-x-2 gap-y-2 items-end'>
-          <BairroSelector
-  bairroSelected=""
-  setBairroSelected={handleBairroChange}
-  bairros={bairrosDisponiveis}
-/>
+      <div className='flex flex-wrap justify-end gap-x-2 gap-y-2 items-end'>
+        <BairroSelector
+          bairroSelected=""
+          setBairroSelected={handleBairroChange}
+          bairros={bairrosDisponiveis}
+        />
         <YearSelector
           yearSelected={yearSelected}
           setYearSelected={setYearSelected}
