@@ -46,7 +46,7 @@ const DeterminantesSociais: React.FC = () => {
         const loadData = async () => {
             setLoading(true);
             try {
-                const apiData = await getApiData('');
+                const apiData = await getApiData('/determinantes');
                 console.log(apiData);
                 await Promise.allSettled([
                     mountDeterminantCollumData(apiData, setWaterSupplyData,
