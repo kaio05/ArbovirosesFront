@@ -1,78 +1,14 @@
-import { useEffect, useState, useMemo } from "react";
+import { useContext } from "react";
 import DefaultLayout from "../../layout/DefaultLayout";
 import ColumnGraphic from "../../components/Charts/ColumnGraphic";
-import { ChartOptions, mountDeterminantCollumData } from "../../service/components/Determinantes-Sociais/ChartOptions";
-import getApiData from "../../service/api/fetchApiData";
 import { SocialFactorsCard } from "../../components/Cards/SocialDeterminantsCard";
+import { DeterminantesContext } from "../../contexts/DeterminantesContext";
 
 
 
 const DeterminantesSociais: React.FC = () => {
 
-    const neighborhoods = ['Todos', 'BOM JESUS', 'SANTO ANTONIO', 'BOM JARDIM', 'BARROCAS', 'PASSAGEM DE PEDRA', 'ESTRADA DA RAIZ', 'RIACHO GRANDE', 'LAGOA DO MATO', 'PERREIROS', 'BELO HORIZONTE'];
-
-    const [neighborhoodSelected, setNeighborhoodSelected] = useState<string>('Todos');
-
-    const [waterSupplyData, setWaterSupplyData] = useState<any[]>([]);
-    const [waterTreatmentData, setWaterTreatmentData] = useState<any[]>([]);
-    const [sewageDrainageData, setSewageDrainageData] = useState<any[]>([]);
-    const [trashCollectionData, setTrashCollectionData] = useState<any[]>([]);
-    const [familyIncomeData, setFamilyIncomeData] = useState<any[]>([]);
-    
-
-    const [waterSupplyCount, setWaterSupplyCount] = useState<any>(0);
-    const [waterTreatmentCount, setWaterTreatmentCount] = useState<any>(0);
-    const [sewageDrainageCount, setSewageDrainageCount] = useState<any>(0);
-    const [trashCollectingCount, setTrashCollectingCount] = useState<any>(0);
-    const [familyIncomeCount, setFamilyIncomeCount] = useState<any>(0);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    const waterSupplyOptions = useMemo(() => ChartOptions(["Rede Encanada", "Poço", "Cisterna", "Carro Pipa", "Outro", "Não Informado", "Total"], waterSupplyData[0]?.data[6] ?? 0), [waterSupplyData]);
-    const waterTreatmentOptions = useMemo(() => ChartOptions(["Clorada", "Fervida", "Filtrada", "Mineral", "Sem Tratamento", "Não Informado", "Total"], waterTreatmentData[0]?.data[6] ?? 0), [waterTreatmentData]);
-    const sewageDrainageOptions = useMemo(() => ChartOptions(["Rede Coletora", "Fossa Séptica", "Fossa Rudimentar", "Direto para Rio/Mar", "Céu Aberto", "Outra Forma", "Não Informado", "Total"], sewageDrainageData[0]?.data[7] ?? 0), [sewageDrainageData]);
-    const trashCollectionOptions = useMemo(() => ChartOptions(["Coletado", "Queimado/Enterrado", "Céu Aberto", "Outro", "Não Informado", "Total"], trashCollectionData[0]?.data[5] ?? 0), [trashCollectionData]);
-    const familyIncomeOptions = useMemo(() => ChartOptions(["Sem renda", "1/4 Salário", "1/2 Salário", "1 Salário Mínimo", "2 Salário Mínimos", "3 Salários Mínimos", "4 Salários Mínimos", "> 4 Salários", "Não Informado", "Total"], familyIncomeData[0]?.data[9] ?? 0), [familyIncomeData]);
-    
-    const waterTreatmentLabels = ["Clorada", "Fervida", "Filtrada", "Mineral", "Sem Tratamento", "Não Informado"];
-
-    const mostCommonTreatmentLabel = useMemo(() => {
-        if (!waterTreatmentData[0]) return '';
-        const values = waterTreatmentData[0].data.slice(0, 6); // exclude Total
-        const maxIndex = values.indexOf(Math.max(...values));
-        return waterTreatmentLabels[maxIndex];
-        }, [waterTreatmentData]);
-
-    useEffect(() => {
-        const loadData = async () => {
-            setLoading(true);
-            try {
-                const apiData = await getApiData('/determinantes');
-                console.log(apiData);
-                await Promise.allSettled([
-                    mountDeterminantCollumData(apiData, setWaterSupplyData,
-                    setWaterTreatmentData,
-                    setSewageDrainageData,
-                    setTrashCollectionData,
-                    setFamilyIncomeData,
-                    setWaterSupplyCount,
-                    setWaterTreatmentCount,
-                    setSewageDrainageCount,
-                    setTrashCollectingCount,
-                    setFamilyIncomeCount,
-                    // setTotalHouses,
-                    neighborhoodSelected)
-                ]);
-            } catch (err) {
-                console.error('Erro ao buscar dados: ', err);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadData();
-    }, [neighborhoodSelected]);
-
-    const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
+    const { loading, waterSupplyCount, waterSupplyData, neighborhoodSelected, setNeighborhoodSelected, setIsOptionSelected, neighborhoods, waterTreatmentCount, waterTreatmentData, mostCommonTreatmentLabel, sewageDrainageCount, sewageDrainageData, trashCollectingCount, trashCollectingData, familyIncomeCount, familyIncomeData, waterSupplyOptions, waterTreatmentOptions, sewageDrainageOptions, trashCollectionOptions, familyIncomeOptions, isOptionSelected } = useContext(DeterminantesContext)
 
     if (loading || waterSupplyData.length == 0) {
         return (
@@ -106,7 +42,7 @@ const DeterminantesSociais: React.FC = () => {
                                 }`}
                     >
                         {
-                            neighborhoods.map((neighborhood) => (
+                            neighborhoods.map((neighborhood: any) => (
                                 <option key={neighborhood} value={neighborhood}>
                                     {neighborhood}
                                 </option>
@@ -138,7 +74,7 @@ const DeterminantesSociais: React.FC = () => {
                 <SocialFactorsCard 
                     title="Destino do lixo"
                     count={trashCollectingCount}
-                    totalHouses={trashCollectionData[0].data[5]}
+                    totalHouses={trashCollectingData[0].data[5]}
                     label="Coleta de lixo"
                 />
                 <SocialFactorsCard 
@@ -175,7 +111,7 @@ const DeterminantesSociais: React.FC = () => {
                 <ColumnGraphic 
                     title='Destino do lixo'
                     options={trashCollectionOptions}
-                    series={trashCollectionData}
+                    series={trashCollectingData}
                 />
             </div>
             <div className='xl:col-start-1 xl:col-end-8 col-span-12 mt-4'>

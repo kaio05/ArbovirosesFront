@@ -5,7 +5,7 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
   const waterSupplyData = [0, 0, 0, 0, 0, 0, 0];
   const waterTreatmentData = [0, 0, 0, 0, 0, 0, 0];
   const sewageDrainageData = [0, 0, 0, 0, 0, 0, 0, 0];
-  const trashCollectionData = [0, 0, 0, 0, 0, 0];
+  const trashCollectingData = [0, 0, 0, 0, 0, 0];
   const familyIncomeData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   
   for(const data of apiData) {
@@ -35,12 +35,12 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
       sewageDrainageData[6] += data.escoamentoNaoInformado;
       sewageDrainageData[7] += data.escoamentoTotal;
       
-      trashCollectionData[0] += data.lixoColetado;
-      trashCollectionData[1] += data.lixoQueimadoEnterrado;
-      trashCollectionData[2] += data.lixoCeuAberto;
-      trashCollectionData[3] += data.lixoOutro;
-      trashCollectionData[4] += data.lixoNaoInformado;
-      trashCollectionData[5] += data.lixoTotal;
+      trashCollectingData[0] += data.lixoColetado;
+      trashCollectingData[1] += data.lixoQueimadoEnterrado;
+      trashCollectingData[2] += data.lixoCeuAberto;
+      trashCollectingData[3] += data.lixoOutro;
+      trashCollectingData[4] += data.lixoNaoInformado;
+      trashCollectingData[5] += data.lixoTotal;
 
       familyIncomeData[0] += data.rendaAusencia;
       familyIncomeData[1] += data.rendaUmQuartoSalario;
@@ -74,7 +74,7 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
 
   setTrashCollectingData([{
       name: "Residências",  
-      data: trashCollectionData
+      data: trashCollectingData
   }]);
 
   setFamilyIncomeData([{
@@ -85,7 +85,7 @@ export async function mountDeterminantCollumData(apiData: any, setWaterSupplyDat
   let waterSupplyCount = Math.max(...waterSupplyData.slice(0,5));
   let waterTreatmentCount = Math.max(...waterTreatmentData.slice(0,5));
   let sewageDrainageCount = Math.max(...sewageDrainageData.slice(0,6));
-  let trashCollectingCount = Math.max(...trashCollectionData.slice(0,4));
+  let trashCollectingCount = Math.max(...trashCollectingData.slice(0,4));
   let familyIncomeCount = Math.max(...familyIncomeData.slice(0,8));
 
   
