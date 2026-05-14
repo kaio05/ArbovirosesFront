@@ -9,7 +9,8 @@ const BaseTable: React.FC<BaseTableProps> = ({neighborhoodData}) => {
   const navigate = useNavigate();
 
   const irParaDashboardBairro = (nameBairro: String) => {
-    navigate("/dashboard/bairro", { state: { bairro: nameBairro } });
+    const bairros = neighborhoodData.map((n) => n.nomeBairro).filter(Boolean).sort();
+    navigate("/dashboard/bairro", { state: { bairro: nameBairro, bairros } });
   };
 
   // Validação de dados
