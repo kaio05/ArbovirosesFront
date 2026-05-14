@@ -30,7 +30,7 @@ const App: React.FC = () => {
   const { loading, error, handleRetry, yearSelected, setYearSelected, agravoSelected, setAgravoSelected, scopeSelected, setScopeSelected, notificationsCount, affectedNeighborhoods, agravoLineSeries, agravoLineAccumulatedSeries, ageRangeCategories, countBySexoSeries, initialWeek, setInitialWeek, finalWeek, setFinalWeek, handleDownloadNeighborhoodReport, downloadingPdf, downloadError, downloadSuccess, neighborhoodApiData } = useContext(DashboardContext)
 
   const bairrosDisponiveis = (neighborhoodApiData ?? [])
-    .map((n) => n.nomeBairro)
+    .map((n: any) => n.nomeBairro)
     .filter(Boolean)
     .sort();
 
@@ -42,6 +42,7 @@ const App: React.FC = () => {
           bairros: bairrosDisponiveis
         } 
       });
+    }
   }
 
   if (loading) {
