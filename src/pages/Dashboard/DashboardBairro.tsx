@@ -7,6 +7,8 @@ import ColumnGraphic from '../../components/Charts/ColumnGraphic';
 import { countByEpidemiologicalWeekOptions, mountAgravoLineData } from '../../service/components/EpidemiologicalWeek';
 import { countBySexoOptions, mountDonutCountBySexo } from '../../service/components/CountBySexo';
 import { countByAgeRangeOptions, mountColumnCountByAgeRange } from '../../service/components/CountByAgeRange';
+import { countBySorotipoOptions, mountDonutCountBySorotipo } from '../../service/components/CountBySorotipo';
+import { countByEvolucaoOptions, mountDonutCountByEvolucao } from '../../service/components/CountByEvolucao';
 import YearSelector from '../../components/Forms/SelectGroup/YearSelector';
 import AgravoSelector from '../../components/Forms/SelectGroup/AgravoSelector';
 import { CountCard } from '../../components/Cards/CountCard';
@@ -44,6 +46,10 @@ const DashboardBairro: React.FC = () => {
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
+const [sorotipoSeries, setSorotipoSeries] = useState<any>([10,15, 29, 2, 11]);
+const [evolucaoSeries, setEvolucaoSeries] = useState<any>([12, 4, 19, 22]);
+const sorotipoOptions: ApexOptions = countBySorotipoOptions();
+const evolucaoOptions: ApexOptions = countByEvolucaoOptions();
 
   const handleBairroChange = (novoBairro: string) => {
     if (novoBairro) {
@@ -78,6 +84,8 @@ const DashboardBairro: React.FC = () => {
     if (bairro) {
       mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected, bairro);
       mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected, bairro);
+      mountDonutCountBySorotipo(setSorotipoSeries, yearSelected, agravoSelected, bairro);
+      mountDonutCountByEvolucao(setEvolucaoSeries, yearSelected, agravoSelected, bairro);
       mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected, bairro);
       notificationsCountData(setNotificationsCount, yearSelected, agravoSelected, bairro);
       mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoSelected, bairro);
@@ -160,6 +168,21 @@ const DashboardBairro: React.FC = () => {
             series={countBySexoSeries ?? []}
           />
         </div>
+        <div className='xl:col-start-1 xl:col-end-8 col-span-12'>
+  <DonutChart
+    chartTitle='Contagem de casos por sorotipo'
+    options={sorotipoOptions}
+    series={sorotipoSeries ?? []}
+  />
+</div>
+
+<div className='xl:col-start-8 xl:col-end-13 col-span-12'>
+  <DonutChart
+    chartTitle='Contagem de casos por evolução'
+    options={evolucaoOptions}
+    series={evolucaoSeries ?? []}
+  />
+</div>
       </div>
     </DefaultLayout>
   );
