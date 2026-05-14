@@ -14,7 +14,7 @@ export async function mountNeighborhoodData(
     });
     const data = await getApiData(`/notifications/count/neighborhood?${queryParams}`)
 
-    setNeighborhoodData(data)
+    setNeighborhoodData(data ?? []) //protege contra undefined 
 
     return data
 }

@@ -19,6 +19,9 @@ import BaseTable from '../../components/Tables/BaseTable';
 import { mountNeighborhoodData } from '../../service/components/NeighborhoodInfoTable';
 import { NeighborhoodInfo } from '../../components/Entity/NeighborhoodInfo';
 import { downloadNeighborhoodWeeklyPdfReport } from '../../service/components/NeighborhoodWeeklyPdfReport';
+import BairroSelector from '../../components/Forms/SelectGroup/BairroSelector';
+import { useNavigate } from 'react-router-dom';
+
 import { DashboardScope } from '../../service/components/dashboardQueryParams';
 
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
@@ -27,6 +30,7 @@ const donutChartOptionsbySexo: ApexOptions = countBySexoOptions();
 const columnGraphicOptions: ApexOptions = countByAgeRangeOptions();
 
 const App: React.FC = () => {
+  const navigate = useNavigate();
   const [agravoLineSeries, setAgravoLineSeries] = useState<any>([])
   const [agravoLineAccumulatedSeries, setAgravoLineAccumulatedSeries] = useState<any>([])
   const [countBySexoSeries, setCountBySexoSeries] = useState<any>([])
@@ -47,6 +51,22 @@ const App: React.FC = () => {
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
   });
+
+    const bairrosDisponiveis = (neighborhoodApiData ?? [])
+    .map((n) => n.nomeBairro)
+    .filter(Boolean)
+    .sort();
+
+  const handleBairroChange = (bairro: string) => {
+    if (bairro) {
+      navigate('/dashboard/bairro', { 
+        state: { 
+          bairro,
+          bairros: bairrosDisponiveis
+        } 
+      });
+    }
+  };
   const [scopeSelected, setScopeSelected] = useState<DashboardScope>(() => {
     const savedScope = localStorage.getItem('dashboardScopeSelected');
     return savedScope === 'confirmados' || savedScope === 'obitos' ? savedScope : 'notificados';
@@ -181,6 +201,11 @@ const App: React.FC = () => {
   return (
     <DefaultLayout>
       <div className='flex flex-wrap justify-end gap-x-2 gap-y-2 items-end'>
+        <BairroSelector
+          bairroSelected=""
+          setBairroSelected={handleBairroChange}
+          bairros={bairrosDisponiveis}
+        />
         <YearSelector
           yearSelected={yearSelected}
           setYearSelected={setYearSelected}
