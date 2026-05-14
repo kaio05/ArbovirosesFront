@@ -1,9 +1,21 @@
 import { ApexOptions } from "apexcharts";
 import getApiData from "../api/fetchApiData";
+import { buildDashboardQueryParams, DashboardScope } from "./dashboardQueryParams";
 
-export async function mountColumnCountByAgeRange(setAgeRangeCategories: Function, yearSelected: string, agravoSelected: string, bairro?: string) {
-    const bairroParam = bairro ? `&bairro=${bairro}` : '';
-    const apiData = await getApiData(`/notifications/count/ageRange?year=${yearSelected}&agravo=${agravoSelected}${bairroParam}`);
+export async function mountColumnCountByAgeRange(
+  setAgeRangeCategories: Function,
+  yearSelected: string,
+  agravoSelected: string,
+  bairro?: string,
+  scope: DashboardScope = 'notificados'
+) {
+    const queryParams = buildDashboardQueryParams({
+      yearSelected,
+      agravoSelected,
+      bairro,
+      scope,
+    });
+    const apiData = await getApiData(`/notifications/count/ageRange?${queryParams}`);
 
     const count = apiData.count;
 
