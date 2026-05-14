@@ -34,6 +34,7 @@ const App: React.FC = () => {
   const [neighborhoodApiData, setNeighborhoodApiData] = useState<NeighborhoodInfo[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [initialWeek, setInitialWeek] = useState<string>('')
   const [finalWeek, setFinalWeek] = useState<string>('')
   const [downloadError, setDownloadError] = useState<string | null>(null)
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null)
@@ -84,17 +85,29 @@ const App: React.FC = () => {
     setDownloadError(null);
     setDownloadSuccess(null);
 
-    const normalizedWeek = finalWeek.trim();
+    const normalizedInitialWeek = initialWeek.trim();
+    const normalizedFinalWeek = finalWeek.trim();
 
-    if (!normalizedWeek) {
-      setDownloadError('Informe até qual semana epidemiológica o relatório deve ser gerado.');
+    if (!normalizedInitialWeek || !normalizedFinalWeek) {
+      setDownloadError('Informe a semana inicial e a semana final para gerar o relatório.');
       return;
     }
 
-    const parsedWeek = Number(normalizedWeek);
+    const parsedInitial = Number(normalizedInitialWeek);
+    const parsedFinal = Number(normalizedFinalWeek);
 
-    if (!Number.isInteger(parsedWeek) || parsedWeek < 1) {
-      setDownloadError('A semana epidemiológica precisa ser um número inteiro maior ou igual a 1.');
+    if (!Number.isInteger(parsedInitial) || parsedInitial < 1) {
+      setDownloadError('A semana inicial precisa ser um número inteiro maior ou igual a 1.');
+      return;
+    }
+
+    if (!Number.isInteger(parsedFinal) || parsedFinal < 1) {
+      setDownloadError('A semana final precisa ser um número inteiro maior ou igual a 1.');
+      return;
+    }
+
+    if (parsedInitial > parsedFinal) {
+      setDownloadError('A semana inicial não pode ser maior que a semana final.');
       return;
     }
 
@@ -104,10 +117,11 @@ const App: React.FC = () => {
       await downloadNeighborhoodWeeklyPdfReport({
         yearSelected,
         agravoSelected,
-        finalWeek: normalizedWeek,
+        initialWeek: normalizedInitialWeek,
+        finalWeek: normalizedFinalWeek,
       });
 
-      setDownloadSuccess(`Relatório em PDF das semanas 1 a ${normalizedWeek} gerado com sucesso.`);
+      setDownloadSuccess(`Relatório em PDF das semanas ${normalizedInitialWeek} a ${normalizedFinalWeek} gerado com sucesso.`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Não foi possível gerar o relatório PDF.';
       setDownloadError(message);
@@ -159,12 +173,12 @@ const App: React.FC = () => {
 
   return (
     <DefaultLayout>
-      <div className='flex justify-end gap-x-2 items-center'>
-        <YearSelector 
+      <div className='flex flex-wrap justify-end gap-x-2 gap-y-2 items-end'>
+        <YearSelector
           yearSelected={yearSelected}
           setYearSelected={setYearSelected}
         />
-        <AgravoSelector 
+        <AgravoSelector
           agravoSelected={agravoSelected}
           setAgravoSelected={setAgravoSelected}
         />
@@ -222,7 +236,26 @@ const App: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <div className="w-full sm:w-56">
+                <div className="w-full sm:w-40">
+                  <label
+                    htmlFor="initialWeek"
+                    className="mb-2 block text-sm font-medium text-black dark:text-white"
+                  >
+                    Semana inicial
+                  </label>
+                  <input
+                    id="initialWeek"
+                    type="number"
+                    min="1"
+                    max="53"
+                    inputMode="numeric"
+                    placeholder="Ex: 1"
+                    value={initialWeek}
+                    onChange={(event) => setInitialWeek(event.target.value)}
+                    className="w-full rounded border border-stroke bg-transparent py-3 px-4 outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  />
+                </div>
+                <div className="w-full sm:w-40">
                   <label
                     htmlFor="finalWeek"
                     className="mb-2 block text-sm font-medium text-black dark:text-white"
@@ -233,6 +266,7 @@ const App: React.FC = () => {
                     id="finalWeek"
                     type="number"
                     min="1"
+                    max="53"
                     inputMode="numeric"
                     placeholder="Ex: 14"
                     value={finalWeek}

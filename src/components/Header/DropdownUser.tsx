@@ -5,34 +5,9 @@ import { useAuth } from '../../contexts/AuthContext';
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const authContext = useAuth();
-  
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
-  
-  // Defensive check - if auth context is not available, don't render
-  if (!authContext) {
-    return null;
-  }
-  
-  const { user, logout, isAuthenticated } = authContext;
-  
-  // Don't render if not authenticated
-  if (!isAuthenticated) {
-    return null;
-  }
 
-  const handleLogout = () => {
-    setDropdownOpen(false);
-    try {
-      logout();
-    } catch (error) {
-      console.error('Error during logout:', error);
-      // Fallback: force page reload
-      window.location.href = '/auth/login';
-    }
-  };
-
-  // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
       if (!dropdown.current) return;
@@ -48,7 +23,6 @@ const DropdownUser = () => {
     return () => document.removeEventListener('click', clickHandler);
   });
 
-  // close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }: KeyboardEvent) => {
       if (!dropdownOpen || keyCode !== 27) return;
@@ -57,6 +31,26 @@ const DropdownUser = () => {
     document.addEventListener('keydown', keyHandler);
     return () => document.removeEventListener('keydown', keyHandler);
   });
+
+  if (!authContext) {
+    return null;
+  }
+
+  const { user, logout, isAuthenticated } = authContext;
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const handleLogout = () => {
+    setDropdownOpen(false);
+    try {
+      logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+      window.location.href = '/auth/login';
+    }
+  };
 
   return (
     <div className="relative">

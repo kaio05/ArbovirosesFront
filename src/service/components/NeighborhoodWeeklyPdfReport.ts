@@ -3,13 +3,15 @@ const baseApi = process.env.REACT_APP_API_URL ?? "";
 interface DownloadNeighborhoodWeeklyPdfParams {
   yearSelected: string;
   agravoSelected: string;
+  initialWeek: string;
   finalWeek: string;
 }
 
-function buildQueryParams({ yearSelected, agravoSelected, finalWeek }: DownloadNeighborhoodWeeklyPdfParams) {
+function buildQueryParams({ yearSelected, agravoSelected, initialWeek, finalWeek }: DownloadNeighborhoodWeeklyPdfParams) {
   const params = new URLSearchParams();
   params.set("year", yearSelected);
   params.set("agravo", agravoSelected);
+  params.set("semanaInicial", initialWeek);
   params.set("semanaFinal", finalWeek);
   return params.toString();
 }
@@ -17,9 +19,10 @@ function buildQueryParams({ yearSelected, agravoSelected, finalWeek }: DownloadN
 export async function downloadNeighborhoodWeeklyPdfReport({
   yearSelected,
   agravoSelected,
+  initialWeek,
   finalWeek,
 }: DownloadNeighborhoodWeeklyPdfParams) {
-  const queryParams = buildQueryParams({ yearSelected, agravoSelected, finalWeek });
+  const queryParams = buildQueryParams({ yearSelected, agravoSelected, initialWeek, finalWeek });
   const response = await fetch(`${baseApi}/notifications/report/neighborhood/pdf?${queryParams}`);
 
   if (!response.ok) {
@@ -42,7 +45,7 @@ export async function downloadNeighborhoodWeeklyPdfReport({
   const link = document.createElement("a");
 
   link.href = downloadUrl;
-  link.download = `relatorio-bairros-semanas-1-a-${finalWeek}.pdf`;
+  link.download = `relatorio-bairros-semanas-${initialWeek}-a-${finalWeek}.pdf`;
   document.body.appendChild(link);
   link.click();
   link.remove();

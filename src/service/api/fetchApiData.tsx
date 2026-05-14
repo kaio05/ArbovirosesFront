@@ -15,11 +15,15 @@ export default async function getApiData(uri: string)
 {
   try {
     const response = await fetchApi(uri)
-    const data = await response.json()
-  
-    return data
+    const json = await response.json()
+
+    // Unwrap standard { message, data } response envelope
+    if (json && typeof json === 'object' && 'data' in json) {
+      return json.data
+    }
+    return json
   } catch (error) {
-    
+
   }
 }
 
