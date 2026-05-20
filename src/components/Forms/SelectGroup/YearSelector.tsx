@@ -13,7 +13,7 @@ const YearSelector: React.FC<YearSelectorProps> = ({yearSelected, setYearSelecte
   };
 
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 11 }, (_, index) => currentYear - index);
+  const years = Array.from({ length: 6 }, (_, index) => currentYear - index);
   
   return (
     <div className="mb-4.5">
