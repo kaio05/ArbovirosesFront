@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { IconHeartStar } from '@tabler/icons-react';
+import { IconFileUpload, IconFileUploadFilled, IconHeartStar, IconUpload } from '@tabler/icons-react';
 import Logo from '../../images/logo/Logo.png';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -287,6 +287,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Determinantes Sociais
                 </NavLink>
               </li>
+              {
+                isAuthenticated && (
+
+                  <li>
+                    <NavLink
+                      to="/uploadDeterminantes"
+                      className={({ isActive }) =>
+                        `group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                          isActive && 'bg-graydark dark:bg-meta-4'
+                          }`
+                        }
+                        >
+                      <IconFileUploadFilled />
+                      Importar Determinantes Sociais
+                    </NavLink>
+                  </li>
+                )
+              }
             </ul> 
           </div> 
 
