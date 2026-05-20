@@ -464,7 +464,6 @@ export default function GerenciarDados() {
                             <table className="min-w-full">
                                 <thead className="bg-gray-50 border-b">
                                     <tr>
-                                        <th className={thCls}>ID</th>
                                         <th className={thCls}>Doença</th>
                                         <th className={thCls}>Data Notif.</th>
                                         <th className={thCls}>Bairro</th>
@@ -478,7 +477,6 @@ export default function GerenciarDados() {
                                 <tbody className="divide-y divide-gray-100">
                                     {data.map(row => (
                                         <tr key={row.idNotification} className="hover:bg-gray-50">
-                                            <td className={tdCls + ' font-mono text-xs text-gray-400'}>{row.idNotification}</td>
                                             <td className={tdCls}>{DOENCA_LABEL[row.idAgravo ?? ''] ?? row.idAgravo ?? '—'}</td>
                                             <td className={tdCls}>{formatDate(row.dataNotification)}</td>
                                             <td className={tdCls}>{row.nomeBairro || '—'}</td>
