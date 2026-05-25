@@ -1,3 +1,5 @@
+import { DashboardScope } from "./dashboardQueryParams";
+
 const baseApi = process.env.REACT_APP_API_URL ?? "";
 
 interface DownloadNeighborhoodWeeklyPdfParams {
@@ -5,14 +7,16 @@ interface DownloadNeighborhoodWeeklyPdfParams {
   agravoSelected: string;
   initialWeek: string;
   finalWeek: string;
+  scopeSelected: DashboardScope;
 }
 
-function buildQueryParams({ yearSelected, agravoSelected, initialWeek, finalWeek }: DownloadNeighborhoodWeeklyPdfParams) {
+function buildQueryParams({ yearSelected, agravoSelected, initialWeek, finalWeek, scopeSelected }: DownloadNeighborhoodWeeklyPdfParams) {
   const params = new URLSearchParams();
   params.set("year", yearSelected);
   params.set("agravo", agravoSelected);
   params.set("semanaInicial", initialWeek);
   params.set("semanaFinal", finalWeek);
+  params.set("scope", scopeSelected);
   return params.toString();
 }
 
@@ -21,8 +25,9 @@ export async function downloadNeighborhoodWeeklyPdfReport({
   agravoSelected,
   initialWeek,
   finalWeek,
+  scopeSelected,
 }: DownloadNeighborhoodWeeklyPdfParams) {
-  const queryParams = buildQueryParams({ yearSelected, agravoSelected, initialWeek, finalWeek });
+  const queryParams = buildQueryParams({ yearSelected, agravoSelected, initialWeek, finalWeek, scopeSelected });
   const response = await fetch(`${baseApi}/notifications/report/neighborhood/pdf?${queryParams}`);
 
   if (!response.ok) {
