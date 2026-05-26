@@ -146,6 +146,7 @@ const App: React.FC = () => {
         agravoSelected,
         initialWeek: normalizedInitialWeek,
         finalWeek: normalizedFinalWeek,
+        scopeSelected,
       });
 
       setDownloadSuccess(`Relatório em PDF das semanas ${normalizedInitialWeek} a ${normalizedFinalWeek} gerado com sucesso.`);
