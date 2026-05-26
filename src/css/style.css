@@ -11,6 +11,12 @@
 @layer components {
 }
 
+/* Impede que o SVG do ApexCharts vaze durante transições de layout */
+.apexcharts-canvas,
+.apexcharts-svg {
+  max-width: 100% !important;
+}
+
 @layer utilities {
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
