@@ -107,7 +107,7 @@ export function DatePickerBR({
     return (
         <div className={`flex flex-col gap-1 ${className}`}>
             {label && (
-                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <label className="text-xs font-medium text-gray-500 dark:text-bodydark2 uppercase tracking-wide">
                     {label}
                 </label>
             )}
@@ -118,14 +118,14 @@ export function DatePickerBR({
                 onChange={handleChange}
                 placeholder={placeholder}
                 maxLength={10}
-                className={`rounded border px-3 py-1.5 text-sm w-40 focus:outline-none transition ${
+                className={`rounded border px-3 py-1.5 text-sm w-40 bg-white dark:bg-form-input text-gray-800 dark:text-bodydark placeholder-gray-400 dark:placeholder-bodydark2 focus:outline-none transition ${
                     error
                         ? 'border-red-400 focus:border-red-500'
-                        : 'border-gray-300 focus:border-indigo-500'
+                        : 'border-gray-300 dark:border-form-strokedark focus:border-indigo-500'
                 }`}
             />
             {error && (
-                <span className="text-xs text-red-500">{error}</span>
+                <span className="text-xs text-red-500 dark:text-meta-1">{error}</span>
             )}
         </div>
     );
