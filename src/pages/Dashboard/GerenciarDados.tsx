@@ -39,25 +39,25 @@ const DOENCAS = [
 
 const ERROR_CATEGORIES = [
     { value: '', label: 'Todos os problemas' },
-    { value: 'BAIRRO_FALTANDO',       label: 'Bairro faltando' },
-    { value: 'DOENCA_NAO_INFORMADA',  label: 'Doença não informada' },
-    { value: 'CLASSIFICACAO_FALTANDO',label: 'Classificação faltando' },
-    { value: 'DATA_FALTANDO',         label: 'Data faltando' },
-    { value: 'SEXO_NAO_INFORMADO',    label: 'Sexo não informado' },
+    { value: 'BAIRRO_FALTANDO',          label: 'Bairro faltando' },
+    { value: 'DOENCA_NAO_INFORMADA',     label: 'Doença não informada' },
+    { value: 'CLASSIFICACAO_FALTANDO',   label: 'Classificação faltando' },
+    { value: 'DATA_FALTANDO',            label: 'Data faltando' },
+    { value: 'SEXO_NAO_INFORMADO',       label: 'Sexo não informado' },
     { value: 'EVOLUCAO_NAO_INFORMADA',   label: 'Evolução não informada' },
     { value: 'DATA_NASCIMENTO_FALTANDO', label: 'Data de nascimento faltando' },
     { value: 'OUTROS',                   label: 'Outros' },
 ];
 
 const CATEGORY_BADGE: Record<string, string> = {
-    BAIRRO_FALTANDO:        'bg-orange-100 text-orange-700',
-    DOENCA_NAO_INFORMADA:   'bg-red-100 text-red-700',
-    CLASSIFICACAO_FALTANDO: 'bg-purple-100 text-purple-700',
-    DATA_FALTANDO:          'bg-blue-100 text-blue-700',
-    SEXO_NAO_INFORMADO:     'bg-pink-100 text-pink-700',
-    EVOLUCAO_NAO_INFORMADA:   'bg-teal-100 text-teal-700',
-    DATA_NASCIMENTO_FALTANDO: 'bg-yellow-100 text-yellow-700',
-    OUTROS:                   'bg-gray-100 text-gray-700',
+    BAIRRO_FALTANDO:          'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+    DOENCA_NAO_INFORMADA:     'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+    CLASSIFICACAO_FALTANDO:   'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+    DATA_FALTANDO:            'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    SEXO_NAO_INFORMADO:       'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400',
+    EVOLUCAO_NAO_INFORMADA:   'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
+    DATA_NASCIMENTO_FALTANDO: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+    OUTROS:                   'bg-gray-100 text-gray-700 dark:bg-meta-4 dark:text-bodydark1',
 };
 
 const DOENCA_LABEL: Record<string, string> = {
@@ -72,7 +72,6 @@ function formatDate(epoch: number | null): string {
     return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 }
 
-/** Converte "YYYY-MM-DD" para epoch do início/fim do dia (horário local). */
 function toStartEpoch(dateStr: string): number {
     return new Date(dateStr + 'T00:00:00').getTime();
 }
@@ -86,7 +85,6 @@ export default function GerenciarDados() {
     const navigate = useNavigate();
     const [tab, setTab] = useState<Tab>('upload');
 
-    // Estado upload
     const [fileType, setFileType]           = useState<FileType>('xlsx');
     const [file, setFile]                   = useState<File | null>(null);
     const [fileName, setFileName]           = useState<string | null>(null);
@@ -97,7 +95,6 @@ export default function GerenciarDados() {
     const [asyncPending, setAsyncPending]   = useState(false);
     const [latestDates, setLatestDates] = useState<{ dengue: string | null; chikungunya: string | null; zika: string | null } | null>(null);
 
-    // Filtros erros
     const [category, setCategory]   = useState('');
     const [doencaErr, setDoencaErr] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -108,7 +105,6 @@ export default function GerenciarDados() {
     const [meta, setMeta]       = useState<PageMeta | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // PDF export
     const [pdfModalOpen, setPdfModalOpen] = useState(false);
     const [pdfLoading, setPdfLoading]     = useState(false);
     const [pdfError, setPdfError]         = useState<string | null>(null);
@@ -199,9 +195,7 @@ export default function GerenciarDados() {
         finally { setLoading(false); }
     }
 
-    useEffect(() => {
-        setErrPage(0);
-    }, [category, doencaErr, startDate, endDate, tab]);
+    useEffect(() => { setErrPage(0); }, [category, doencaErr, startDate, endDate, tab]);
 
     useEffect(() => {
         if (tab === 'erros') fetchErrors();
@@ -213,7 +207,6 @@ export default function GerenciarDados() {
         setMeta(null);
     }
 
-    /** Retorna os filtros ativos como objeto (para passar ao PDF e descrever no modal). */
     function buildActiveFilters(useCategory: boolean) {
         return {
             category:  useCategory && category  ? category  : undefined,
@@ -254,8 +247,8 @@ export default function GerenciarDados() {
         return parts.join(' | ');
     }
 
-    const thCls = 'px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide';
-    const tdCls = 'px-3 py-2 text-sm text-gray-700 whitespace-nowrap';
+    const thCls = 'px-3 py-2 text-left text-xs font-semibold text-gray-500 dark:text-bodydark2 uppercase tracking-wide';
+    const tdCls = 'px-3 py-2 text-sm text-gray-700 dark:text-bodydark whitespace-nowrap';
 
     return (
         <DefaultLayout>
@@ -263,7 +256,7 @@ export default function GerenciarDados() {
                 <h2 className="text-2xl font-semibold text-indigo-600 mb-5">Gerir Notificações</h2>
 
                 {/* Tabs */}
-                <div className="flex border-b border-gray-200 mb-6">
+                <div className="flex border-b border-gray-200 dark:border-strokedark mb-6">
                     {([['upload', 'Importar Notificações'], ['erros', 'Dados com Algum Erro']] as [Tab, string][]).map(([t, label]) => (
                         <button
                             key={t}
@@ -271,7 +264,7 @@ export default function GerenciarDados() {
                             className={`px-5 py-2.5 text-sm font-medium border-b-2 transition ${
                                 tab === t
                                     ? 'border-indigo-600 text-indigo-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                                    : 'border-transparent text-gray-500 dark:text-bodydark2 hover:text-gray-700 dark:hover:text-bodydark'
                             }`}
                         >
                             {label}
@@ -279,16 +272,16 @@ export default function GerenciarDados() {
                     ))}
                 </div>
 
-                {/* Aba Upload */}
+                {/* ── Aba Upload ── */}
                 {tab === 'upload' && (
-                    <div className="bg-white shadow-md rounded-lg p-6">
+                    <div className="bg-white dark:bg-boxdark shadow-md rounded-lg p-6">
                         <div className="flex flex-wrap justify-center gap-3 mb-6">
                             {[
-                                { key: 'dengue'      as const, label: 'Dengue',       color: 'border-orange-200 bg-orange-50 text-orange-700' },
-                                { key: 'chikungunya' as const, label: 'Chikungunya',  color: 'border-purple-200 bg-purple-50 text-purple-700' },
-                                { key: 'zika'        as const, label: 'Zika',         color: 'border-teal-200   bg-teal-50   text-teal-700'   },
-                            ].map(({ key, label, color }) => (
-                                <div key={key} className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${color}`}>
+                                { key: 'dengue'      as const, label: 'Dengue',      cls: 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-900/20 dark:text-orange-300' },
+                                { key: 'chikungunya' as const, label: 'Chikungunya', cls: 'border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-900/20 dark:text-purple-300' },
+                                { key: 'zika'        as const, label: 'Zika',        cls: 'border-teal-200   bg-teal-50   text-teal-700   dark:border-teal-800   dark:bg-teal-900/20   dark:text-teal-300'   },
+                            ].map(({ key, label, cls }) => (
+                                <div key={key} className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm ${cls}`}>
                                     <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
@@ -304,15 +297,15 @@ export default function GerenciarDados() {
                         </div>
 
                         <div className="mb-6">
-                            <p className="text-gray-700 font-medium mb-3 text-center">Selecione o formato do arquivo</p>
+                            <p className="text-gray-700 dark:text-bodydark font-medium mb-3 text-center">Selecione o formato do arquivo</p>
                             <div className="flex justify-center gap-4 flex-wrap">
                                 {(Object.keys(FILE_TYPE_CONFIG) as FileType[]).map((type) => (
                                     <label
                                         key={type}
                                         className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 cursor-pointer transition select-none ${
                                             fileType === type
-                                                ? 'border-indigo-600 bg-indigo-50 text-indigo-700 font-semibold'
-                                                : 'border-gray-300 text-gray-600 hover:border-indigo-400'
+                                                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 font-semibold'
+                                                : 'border-gray-300 dark:border-strokedark text-gray-600 dark:text-bodydark2 hover:border-indigo-400 dark:hover:border-indigo-500'
                                         }`}
                                     >
                                         <input
@@ -329,8 +322,8 @@ export default function GerenciarDados() {
                             </div>
                         </div>
 
-                        <div className="border-2 border-dashed border-indigo-400 rounded-lg p-6 text-center">
-                            <p className="text-gray-700 font-medium">Arraste e solte seu arquivo aqui ou</p>
+                        <div className="border-2 border-dashed border-indigo-400 dark:border-indigo-600 rounded-lg p-6 text-center">
+                            <p className="text-gray-700 dark:text-bodydark font-medium">Arraste e solte seu arquivo aqui ou</p>
                             <label htmlFor="file-upload-manage" className="inline-block mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md cursor-pointer hover:bg-indigo-700 transition">
                                 Escolher arquivo
                                 <input
@@ -341,12 +334,12 @@ export default function GerenciarDados() {
                                     onChange={handleFileChange}
                                 />
                             </label>
-                            {fileName && <p className="mt-2 text-green-600 font-medium">Arquivo selecionado: {fileName}</p>}
-                            {uploadError && <p className="mt-3 text-red-600">{uploadError}</p>}
+                            {fileName && <p className="mt-2 text-green-600 dark:text-meta-3 font-medium">Arquivo selecionado: {fileName}</p>}
+                            {uploadError && <p className="mt-3 text-red-600 dark:text-meta-1">{uploadError}</p>}
                         </div>
 
                         {asyncPending && (
-                            <div className="mt-4 flex items-start gap-3 rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-yellow-800">
+                            <div className="mt-4 flex items-start gap-3 rounded-lg border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20 p-4 text-yellow-800 dark:text-yellow-300">
                                 <svg className="mt-0.5 h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                                 </svg>
@@ -375,16 +368,16 @@ export default function GerenciarDados() {
                     </div>
                 )}
 
-                {/* Filtros aba erros */}
+                {/* ── Filtros aba erros ── */}
                 {tab === 'erros' && (
-                    <div className="rounded-lg border border-gray-200 bg-white p-4 mb-5 shadow-sm">
+                    <div className="rounded-lg border border-gray-200 dark:border-strokedark bg-white dark:bg-boxdark p-4 mb-5 shadow-sm">
                         <div className="flex flex-wrap items-end gap-3">
                             {/* Problema */}
                             <div className="flex flex-col gap-1">
-                                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Problema</label>
+                                <label className="text-xs font-medium text-gray-500 dark:text-bodydark2 uppercase tracking-wide">Problema</label>
                                 <select
                                     value={category} onChange={e => setCategory(e.target.value)}
-                                    className="rounded border border-gray-300 px-3 py-1.5 text-sm w-52 focus:border-indigo-500 focus:outline-none"
+                                    className="rounded border border-gray-300 dark:border-form-strokedark bg-white dark:bg-form-input text-gray-800 dark:text-bodydark px-3 py-1.5 text-sm w-52 focus:border-indigo-500 focus:outline-none"
                                 >
                                     {ERROR_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                                 </select>
@@ -392,10 +385,10 @@ export default function GerenciarDados() {
 
                             {/* Doença */}
                             <div className="flex flex-col gap-1">
-                                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Doença</label>
+                                <label className="text-xs font-medium text-gray-500 dark:text-bodydark2 uppercase tracking-wide">Doença</label>
                                 <select
                                     value={doencaErr} onChange={e => setDoencaErr(e.target.value)}
-                                    className="rounded border border-gray-300 px-3 py-1.5 text-sm w-44 focus:border-indigo-500 focus:outline-none"
+                                    className="rounded border border-gray-300 dark:border-form-strokedark bg-white dark:bg-form-input text-gray-800 dark:text-bodydark px-3 py-1.5 text-sm w-44 focus:border-indigo-500 focus:outline-none"
                                 >
                                     {DOENCAS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
                                 </select>
@@ -421,7 +414,7 @@ export default function GerenciarDados() {
                             {hasAnyFilter && (
                                 <button
                                     onClick={() => { setCategory(''); setDoencaErr(''); setStartDate(''); setEndDate(''); }}
-                                    className="rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 transition"
+                                    className="rounded border border-gray-300 dark:border-strokedark px-3 py-1.5 text-sm text-gray-500 dark:text-bodydark2 hover:bg-gray-100 dark:hover:bg-meta-4 transition"
                                 >
                                     Limpar filtros
                                 </button>
@@ -439,18 +432,17 @@ export default function GerenciarDados() {
                             </button>
                         </div>
 
-                        {/* Resumo dos filtros ativos */}
                         {hasAnyFilter && (
-                            <p className="mt-3 text-xs text-indigo-600 font-medium">
+                            <p className="mt-3 text-xs text-indigo-600 dark:text-indigo-400 font-medium">
                                 Filtros ativos: {activeFiltersSummary()}
                             </p>
                         )}
                     </div>
                 )}
 
-                {/* Tabela erros */}
+                {/* ── Tabela erros ── */}
                 {tab === 'erros' && (
-                    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+                    <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-strokedark bg-white dark:bg-boxdark shadow-sm">
                         {loading ? (
                             <div className="flex justify-center items-center py-16">
                                 <svg className="animate-spin h-8 w-8 text-indigo-500" viewBox="0 0 24 24">
@@ -459,10 +451,10 @@ export default function GerenciarDados() {
                                 </svg>
                             </div>
                         ) : data.length === 0 ? (
-                            <p className="py-16 text-center text-gray-400">Nenhum registro encontrado.</p>
+                            <p className="py-16 text-center text-gray-400 dark:text-bodydark2">Nenhum registro encontrado.</p>
                         ) : (
                             <table className="min-w-full">
-                                <thead className="bg-gray-50 border-b">
+                                <thead className="bg-gray-50 dark:bg-meta-4 border-b border-gray-200 dark:border-strokedark">
                                     <tr>
                                         <th className={thCls}>ID</th>
                                         <th className={thCls}>Doença</th>
@@ -475,17 +467,17 @@ export default function GerenciarDados() {
                                         <th className={thCls}>Problema</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-gray-100 dark:divide-strokedark">
                                     {data.map(row => (
-                                        <tr key={row.idNotification} className="hover:bg-gray-50">
-                                            <td className={tdCls + ' font-mono text-xs text-gray-400'}>{row.idNotification}</td>
+                                        <tr key={row.idNotification} className="hover:bg-gray-50 dark:hover:bg-meta-4 transition-colors">
+                                            <td className={`${tdCls} font-mono text-xs text-gray-400 dark:text-bodydark2`}>{row.idNotification}</td>
                                             <td className={tdCls}>{DOENCA_LABEL[row.idAgravo ?? ''] ?? row.idAgravo ?? '—'}</td>
                                             <td className={tdCls}>{formatDate(row.dataNotification)}</td>
                                             <td className={tdCls}>{row.nomeBairro || '—'}</td>
                                             <td className={tdCls}>{row.sexo || '—'}</td>
                                             <td className={tdCls}>{row.classificacao || '—'}</td>
                                             <td className={tdCls}>{row.evolucao || '—'}</td>
-                                            <td className={tdCls + ' text-center'}>{row.semanaEpidemiologica || '—'}</td>
+                                            <td className={`${tdCls} text-center`}>{row.semanaEpidemiologica || '—'}</td>
                                             <td className={tdCls}>
                                                 <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_BADGE[row.category ?? 'OUTROS'] ?? CATEGORY_BADGE.OUTROS}`}>
                                                     {ERROR_CATEGORIES.find(c => c.value === row.category)?.label ?? 'Outros'}
@@ -499,22 +491,22 @@ export default function GerenciarDados() {
                     </div>
                 )}
 
-                {/* Paginação */}
+                {/* ── Paginação ── */}
                 {tab === 'erros' && meta && meta.totalPages > 1 && (
-                    <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
+                    <div className="flex items-center justify-between mt-4 text-sm text-gray-600 dark:text-bodydark">
                         <span>{meta.totalElements} registros — Página {meta.number + 1} de {meta.totalPages}</span>
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setErrPage(p => Math.max(0, p - 1))}
                                 disabled={errPage === 0}
-                                className="rounded border border-gray-300 px-3 py-1 hover:bg-gray-100 disabled:opacity-40 transition"
+                                className="rounded border border-gray-300 dark:border-strokedark px-3 py-1 text-gray-600 dark:text-bodydark hover:bg-gray-100 dark:hover:bg-meta-4 disabled:opacity-40 transition"
                             >
                                 ← Anterior
                             </button>
                             <button
                                 onClick={() => setErrPage(p => Math.min((meta.totalPages ?? 1) - 1, p + 1))}
                                 disabled={errPage >= (meta.totalPages ?? 1) - 1}
-                                className="rounded border border-gray-300 px-3 py-1 hover:bg-gray-100 disabled:opacity-40 transition"
+                                className="rounded border border-gray-300 dark:border-strokedark px-3 py-1 text-gray-600 dark:text-bodydark hover:bg-gray-100 dark:hover:bg-meta-4 disabled:opacity-40 transition"
                             >
                                 Próxima →
                             </button>
@@ -530,33 +522,32 @@ export default function GerenciarDados() {
                 position="center"
             />
 
-            {/* Modal de confirmação de exportação PDF */}
+            {/* ── Modal PDF ── */}
             {pdfModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-                    <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="w-full max-w-md rounded-xl bg-white dark:bg-boxdark p-6 shadow-2xl">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100">
-                                <svg className="h-5 w-5 text-red-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+                                <svg className="h-5 w-5 text-red-600 dark:text-meta-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                                 </svg>
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-800">Exportar relatório PDF</h3>
+                            <h3 className="text-lg font-semibold text-gray-800 dark:text-bodydark1">Exportar relatório PDF</h3>
                         </div>
 
                         {hasAnyFilter ? (
                             <>
-                                <p className="text-sm text-gray-600 mb-1">
+                                <p className="text-sm text-gray-600 dark:text-bodydark mb-1">
                                     Você possui filtros ativos. Como deseja exportar?
                                 </p>
-                                <p className="text-xs text-indigo-600 font-medium mb-4">
+                                <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium mb-4">
                                     {activeFiltersSummary()}
                                 </p>
                                 <div className="flex flex-col gap-3">
-                                    {/* Exportar com filtros */}
                                     <button
                                         onClick={() => handleExportPdf(true)}
                                         disabled={pdfLoading}
-                                        className="flex items-center justify-center gap-2 rounded-lg border-2 border-indigo-600 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-700 hover:bg-indigo-100 disabled:opacity-60 transition"
+                                        className="flex items-center justify-center gap-2 rounded-lg border-2 border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 px-4 py-3 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 disabled:opacity-60 transition"
                                     >
                                         {pdfLoading ? (
                                             <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
@@ -571,11 +562,10 @@ export default function GerenciarDados() {
                                         Exportar apenas com os filtros ativos
                                     </button>
 
-                                    {/* Exportar todos */}
                                     <button
                                         onClick={() => handleExportPdf(false)}
                                         disabled={pdfLoading}
-                                        className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60 transition"
+                                        className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-strokedark px-4 py-3 text-sm font-medium text-gray-700 dark:text-bodydark hover:bg-gray-50 dark:hover:bg-meta-4 disabled:opacity-60 transition"
                                     >
                                         Exportar todos os dados com erros
                                     </button>
@@ -583,7 +573,7 @@ export default function GerenciarDados() {
                             </>
                         ) : (
                             <>
-                                <p className="text-sm text-gray-600 mb-5">
+                                <p className="text-sm text-gray-600 dark:text-bodydark mb-5">
                                     Nenhum filtro aplicado. Deseja exportar <strong>todos os dados com erros</strong>?
                                 </p>
                                 <button
@@ -603,13 +593,13 @@ export default function GerenciarDados() {
                         )}
 
                         {pdfError && (
-                            <p className="mt-3 text-sm text-red-600">{pdfError}</p>
+                            <p className="mt-3 text-sm text-red-600 dark:text-meta-1">{pdfError}</p>
                         )}
 
                         <button
                             onClick={() => { setPdfModalOpen(false); setPdfError(null); }}
                             disabled={pdfLoading}
-                            className="mt-3 w-full rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 disabled:opacity-60 transition"
+                            className="mt-3 w-full rounded-lg px-4 py-2 text-sm text-gray-500 dark:text-bodydark2 hover:bg-gray-100 dark:hover:bg-meta-4 disabled:opacity-60 transition"
                         >
                             Cancelar
                         </button>

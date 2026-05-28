@@ -83,7 +83,7 @@ const ChartLiraPorBairro: React.FC<ChartLiraPorBairroProps> = ({ data }) => {
   ];
 
   return (
-    <div id="chartLiraPorBairro">
+    <div id="chartLiraPorBairro" className="overflow-hidden">
       <ReactApexChart options={options} series={series} type="bar" height={350} />
     </div>
   );
