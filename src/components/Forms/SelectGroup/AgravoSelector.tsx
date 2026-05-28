@@ -3,15 +3,18 @@ import React, { useState } from 'react';
 interface AgravoSelectorProps {
     agravoSelected: string;
     setAgravoSelected: Function;
+    scopeSelected?: string;
 }
 
-const AgravoSelector: React.FC<AgravoSelectorProps> = ({agravoSelected, setAgravoSelected}) => {
+const AgravoSelector: React.FC<AgravoSelectorProps> = ({agravoSelected, setAgravoSelected, scopeSelected}) => {
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
   const changeTextColor = () => {
     setIsOptionSelected(true);
   };
-  
+
+  const isConfirmados = scopeSelected === 'confirmados';
+
   return (
     <div className="mb-4.5">
       <div className="relative z-20 bg-transparent dark:bg-form-input">
@@ -25,15 +28,37 @@ const AgravoSelector: React.FC<AgravoSelectorProps> = ({agravoSelected, setAgrav
             isOptionSelected ? 'text-black dark:text-white' : ''
           }`}
         >
-            <option value={'dengue'} className="text-body dark:text-bodydark">
-                Dengue
-            </option>
-            <option value={'zika'} className="text-body dark:text-bodydark">
+          {isConfirmados ? (
+            <>
+              <option value={'dengue_classica'} className="text-body dark:text-bodydark">
+                Dengue Clássica
+              </option>
+              <option value={'dengue_alarmante'} className="text-body dark:text-bodydark">
+                Dengue Alarmante
+              </option>
+              <option value={'dengue_grave'} className="text-body dark:text-bodydark">
+                Dengue Grave
+              </option>
+              <option value={'zika'} className="text-body dark:text-bodydark">
                 Zika
-            </option>
-            <option value={'chikungunya'} className="text-body dark:text-bodydark">
+              </option>
+              <option value={'chikungunya'} className="text-body dark:text-bodydark">
                 Chikungunya
-            </option>
+              </option>
+            </>
+          ) : (
+            <>
+              <option value={'dengue'} className="text-body dark:text-bodydark">
+                Dengue
+              </option>
+              <option value={'zika'} className="text-body dark:text-bodydark">
+                Zika
+              </option>
+              <option value={'chikungunya'} className="text-body dark:text-bodydark">
+                Chikungunya
+              </option>
+            </>
+          )}
         </select>
       </div>
     </div>

@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 interface YearSelectorProps {
     yearSelected: string;
     setYearSelected: Function;
+    minYear?: number;
 }
 
-const YearSelector: React.FC<YearSelectorProps> = ({yearSelected, setYearSelected}) => {
+const YearSelector: React.FC<YearSelectorProps> = ({yearSelected, setYearSelected, minYear}) => {
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
   const changeTextColor = () => {
@@ -13,7 +14,8 @@ const YearSelector: React.FC<YearSelectorProps> = ({yearSelected, setYearSelecte
   };
 
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 11 }, (_, index) => currentYear - index);
+  const firstYear = minYear ?? currentYear - 10;
+  const years = Array.from({ length: currentYear - firstYear + 1 }, (_, i) => currentYear - i);
   
   return (
     <div className="mb-4.5">

@@ -38,6 +38,7 @@ const App: React.FC = () => {
   const [affectedNeighborhoods, setAffectedNeighborhoods] = useState<any>(0)
   const [notificationsCount, setNotificationsCount] = useState<any>(0)
   const [neighborhoodApiData, setNeighborhoodApiData] = useState<NeighborhoodInfo[]>([])
+  const [minYear, setMinYear] = useState<number | undefined>(undefined)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [initialWeek, setInitialWeek] = useState<string>('')
@@ -46,7 +47,15 @@ const App: React.FC = () => {
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null)
   const [downloadingPdf, setDownloadingPdf] = useState<boolean>(false)
   const [agravoSelected, setAgravoSelected] = useState<string>(() => {
-    return localStorage.getItem('agravoSelected') || 'dengue';
+    const savedScope = localStorage.getItem('dashboardScopeSelected');
+    const savedAgravo = localStorage.getItem('agravoSelected') || '';
+    const subtipos = ['dengue_classica', 'dengue_alarmante', 'dengue_grave'];
+    if (savedScope === 'confirmados') {
+      return subtipos.includes(savedAgravo) || ['zika', 'chikungunya'].includes(savedAgravo)
+        ? savedAgravo
+        : 'dengue_classica';
+    }
+    return ['dengue', 'zika', 'chikungunya'].includes(savedAgravo) ? savedAgravo : 'dengue';
   });
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
@@ -71,7 +80,26 @@ const App: React.FC = () => {
     const savedScope = localStorage.getItem('dashboardScopeSelected');
     return savedScope === 'confirmados' || savedScope === 'obitos' ? savedScope : 'notificados';
   });
+
+  const DENGUE_SUBTIPOS = ['dengue_classica', 'dengue_alarmante', 'dengue_grave'];
+
+  const handleScopeChange = (newScope: DashboardScope) => {
+    setScopeSelected(newScope);
+    if (newScope === 'confirmados' && agravoSelected === 'dengue') {
+      setAgravoSelected('dengue_classica');
+    } else if (newScope !== 'confirmados' && DENGUE_SUBTIPOS.includes(agravoSelected)) {
+      setAgravoSelected('dengue');
+    }
+  };
   
+  useEffect(() => {
+    const baseApi = process.env.REACT_APP_API_URL ?? '';
+    fetch(`${baseApi}/notifications/min-year`)
+      .then(r => r.json())
+      .then(data => { if (data?.data != null) setMinYear(data.data); })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -210,14 +238,16 @@ const App: React.FC = () => {
         <YearSelector
           yearSelected={yearSelected}
           setYearSelected={setYearSelected}
+          minYear={minYear}
+        />
+        <DashboardScopeSelector
+          scopeSelected={scopeSelected}
+          setScopeSelected={handleScopeChange}
         />
         <AgravoSelector
           agravoSelected={agravoSelected}
           setAgravoSelected={setAgravoSelected}
-        />
-        <DashboardScopeSelector
           scopeSelected={scopeSelected}
-          setScopeSelected={setScopeSelected}
         />
       </div>
       <div className='flex flex-col md:flex-row gap-4'>

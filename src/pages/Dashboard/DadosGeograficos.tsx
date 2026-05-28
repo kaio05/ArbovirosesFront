@@ -11,7 +11,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [agravoSelected, setAgravoSelected] = useState<string>(() => {
-    return localStorage.getItem('agravoSelected') || 'dengue';
+    return localStorage.getItem('agravoSelected') || 'dengue_geral';
   });
 
   const [yearSelected, setYearSelected] = useState<string>(() => {

@@ -60,6 +60,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
     </span>
   );
 
+  const tip = (text: string) => sidebarCollapsed ? text : undefined;
+
   return (
     <aside
       ref={sidebar}
@@ -117,7 +119,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
 
             <ul className="mb-6 flex flex-col gap-1.5">
               <li>
-                <NavLink to="/" end className={({ isActive }) => navItem(isActive)}>
+                <NavLink to="/" end title={tip('Dashboard Geral')} className={({ isActive }) => navItem(isActive)}>
                   <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 18 18">
                     <path d="M6.10322 0.956299H2.53135C1.5751 0.956299 0.787598 1.7438 0.787598 2.70005V6.27192C0.787598 7.22817 1.5751 8.01567 2.53135 8.01567H6.10322C7.05947 8.01567 7.84697 7.22817 7.84697 6.27192V2.72817C7.8751 1.7438 7.0876 0.956299 6.10322 0.956299ZM6.60947 6.30005C6.60947 6.5813 6.38447 6.8063 6.10322 6.8063H2.53135C2.2501 6.8063 2.0251 6.5813 2.0251 6.30005V2.72817C2.0251 2.44692 2.2501 2.22192 2.53135 2.22192H6.10322C6.38447 2.22192 6.60947 2.44692 6.60947 2.72817V6.30005Z" fill="" />
                     <path d="M15.4689 0.956299H11.8971C10.9408 0.956299 10.1533 1.7438 10.1533 2.70005V6.27192C10.1533 7.22817 10.9408 8.01567 11.8971 8.01567H15.4689C16.4252 8.01567 17.2127 7.22817 17.2127 6.27192V2.72817C17.2127 1.7438 16.4252 0.956299 15.4689 0.956299ZM15.9752 6.30005C15.9752 6.5813 15.7502 6.8063 15.4689 6.8063H11.8971C11.6158 6.8063 11.3908 6.5813 11.3908 6.30005V2.72817C11.3908 2.44692 11.6158 2.22192 11.8971 2.22192H15.4689C15.7502 2.22192 15.9752 2.44692 15.9752 2.72817V6.30005Z" fill="" />
@@ -129,7 +131,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
               </li>
 
               <li>
-                <NavLink to="/dashboard/dadosGeograficos" className={({ isActive }) => navItem(isActive)}>
+                <NavLink to="/dashboard/dadosGeograficos" title={tip('Dados Geográficos')} className={({ isActive }) => navItem(isActive)}>
                   <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="" />
                   </svg>
@@ -138,7 +140,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
               </li>
 
               <li>
-                <NavLink to="/dashboard/previsaoCasos" className={({ isActive }) => navItem(isActive)}>
+                <NavLink to="/dashboard/previsaoCasos" title={tip('Previsão de Casos')} className={({ isActive }) => navItem(isActive)}>
                   <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
                     <path d="M3 3v18h18v-2H5V3H3zm2 15l3.5-3.5L12 18l4-6 4 8H5v-2z" fill="" />
                   </svg>
@@ -147,7 +149,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
               </li>
 
               <li>
-                <NavLink to="/lira/dashboard" className={({ isActive }) => navItem(isActive)}>
+                <NavLink to="/lira/dashboard" title={tip('Dashboard LIRA')} className={({ isActive }) => navItem(isActive)}>
                   <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
                     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="" />
                   </svg>
@@ -157,7 +159,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
 
               {isAuthenticated && (
                 <li>
-                  <NavLink to="/gerenciarDados" className={({ isActive }) => navItem(isActive)}>
+                  <NavLink to="/gerenciarDados" title={tip('Gerir Notificações')} className={({ isActive }) => navItem(isActive)}>
                     <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
                       <path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h18v2H3v-2z" fill="" />
                       <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" fill="" />
@@ -169,7 +171,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
               )}
 
               <li>
-                <NavLink to="/lira/carregar" className={({ isActive }) => navItem(isActive)}>
+                <NavLink to="/lira/carregar" title={tip('Carregar Dados LIRA')} className={({ isActive }) => navItem(isActive)}>
                   <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 512 512">
                     <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
                   </svg>
@@ -178,7 +180,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
               </li>
 
               <li>
-                <NavLink to="/dashboard/determinantesSociais" className={({ isActive }) => navItem(isActive)}>
+                <NavLink to="/dashboard/determinantesSociais" title={tip('Determinantes Sociais')} className={({ isActive }) => navItem(isActive)}>
                   <IconHeartStar size={18} className="shrink-0" />
                   {label('Determinantes Sociais')}
                 </NavLink>
@@ -199,7 +201,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
             <ul className="mb-6 flex flex-col gap-1.5">
               {!isAuthenticated && (
                 <li>
-                  <NavLink to="/auth/login" className={({ isActive }) => navItem(isActive)}>
+                  <NavLink to="/auth/login" title={tip('Fazer Login')} className={({ isActive }) => navItem(isActive)}>
                     <svg className="fill-current shrink-0" width="18" height="19" viewBox="0 0 18 19">
                       <g clipPath="url(#clip0_130_9814)">
                         <path d="M12.7127 0.55835H9.53457C8.80332 0.55835 8.18457 1.1771 8.18457 1.90835V3.84897C8.18457 4.18647 8.46582 4.46772 8.80332 4.46772C9.14082 4.46772 9.45019 4.18647 9.45019 3.84897V1.88022C9.45019 1.82397 9.47832 1.79585 9.53457 1.79585H12.7127C13.3877 1.79585 13.9221 2.33022 13.9221 3.00522V15.0709C13.9221 15.7459 13.3877 16.2802 12.7127 16.2802H9.53457C9.47832 16.2802 9.45019 16.2521 9.45019 16.1959V14.2552C9.45019 13.9177 9.16894 13.6365 8.80332 13.6365C8.43769 13.6365 8.18457 13.9177 8.18457 14.2552V16.1959C8.18457 16.9271 8.80332 17.5459 9.53457 17.5459H12.7127C14.0908 17.5459 15.1877 16.4209 15.1877 15.0709V3.03335C15.1877 1.65522 14.0627 0.55835 12.7127 0.55835Z" fill="" />
@@ -218,7 +220,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
 
               {isAuthenticated && (
                 <li>
-                  <NavLink to="/auth/registrar" className={({ isActive }) => navItem(isActive)}>
+                  <NavLink to="/auth/registrar" title={tip('Registrar Usuário')} className={({ isActive }) => navItem(isActive)}>
                     <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
                       <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="" />
                     </svg>
