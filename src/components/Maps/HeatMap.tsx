@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
@@ -47,7 +47,30 @@ const HeatLayer: React.FC<{ data: [number, number, number][] }> = ({ data }) => 
   return null;
 };
 
+const DarkModeTileFilter: React.FC<{ isDark: boolean }> = ({ isDark }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    const tilePane = map.getPane('tilePane');
+    if (tilePane) {
+      tilePane.style.filter = isDark ? 'invert(1) hue-rotate(180deg)' : '';
+    }
+  }, [isDark, map]);
+
+  return null;
+};
+
 const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
+  const [isDark, setIsDark] = useState(() => document.body.classList.contains('dark'));
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.body.classList.contains('dark'));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <MapContainer
       center={[-5.1878, -37.3442]}
@@ -63,6 +86,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ data }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
+      <DarkModeTileFilter isDark={isDark} />
       <HeatLayer data={data} />
     </MapContainer>
   );

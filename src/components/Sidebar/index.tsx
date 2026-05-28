@@ -107,53 +107,44 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         <nav className="mt-5 py-4 px-2 lg:mt-9">
 
-          {/* MENU */}
+          {/* Título MENU — centralizado */}
+          <h3
+            className={`mb-4 text-sm font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
+              sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:mb-0' : 'opacity-100 text-center'
+            }`}
+          >
+            MENU
+          </h3>
+
+          {/* SINAN */}
           <div>
             <h3
-              className={`mb-4 ml-2 text-sm font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
+              className={`mb-2 ml-2 text-xs font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
                 sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:mb-0' : 'opacity-100'
               }`}
             >
-              MENU
+              SINAN
             </h3>
 
-            <ul className="mb-6 flex flex-col gap-1.5">
+            <ul className="flex flex-col gap-1.5">
               <li>
-                <NavLink to="/" end title={tip('Dashboard Geral')} className={({ isActive }) => navItem(isActive)}>
+                <NavLink to="/" end title={tip('Dashboard SINAN')} className={({ isActive }) => navItem(isActive)}>
                   <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 18 18">
                     <path d="M6.10322 0.956299H2.53135C1.5751 0.956299 0.787598 1.7438 0.787598 2.70005V6.27192C0.787598 7.22817 1.5751 8.01567 2.53135 8.01567H6.10322C7.05947 8.01567 7.84697 7.22817 7.84697 6.27192V2.72817C7.8751 1.7438 7.0876 0.956299 6.10322 0.956299ZM6.60947 6.30005C6.60947 6.5813 6.38447 6.8063 6.10322 6.8063H2.53135C2.2501 6.8063 2.0251 6.5813 2.0251 6.30005V2.72817C2.0251 2.44692 2.2501 2.22192 2.53135 2.22192H6.10322C6.38447 2.22192 6.60947 2.44692 6.60947 2.72817V6.30005Z" fill="" />
                     <path d="M15.4689 0.956299H11.8971C10.9408 0.956299 10.1533 1.7438 10.1533 2.70005V6.27192C10.1533 7.22817 10.9408 8.01567 11.8971 8.01567H15.4689C16.4252 8.01567 17.2127 7.22817 17.2127 6.27192V2.72817C17.2127 1.7438 16.4252 0.956299 15.4689 0.956299ZM15.9752 6.30005C15.9752 6.5813 15.7502 6.8063 15.4689 6.8063H11.8971C11.6158 6.8063 11.3908 6.5813 11.3908 6.30005V2.72817C11.3908 2.44692 11.6158 2.22192 11.8971 2.22192H15.4689C15.7502 2.22192 15.9752 2.44692 15.9752 2.72817V6.30005Z" fill="" />
                     <path d="M6.10322 9.92822H2.53135C1.5751 9.92822 0.787598 10.7157 0.787598 11.672V15.2438C0.787598 16.2001 1.5751 16.9876 2.53135 16.9876H6.10322C7.05947 16.9876 7.84697 16.2001 7.84697 15.2438V11.7001C7.8751 10.7157 7.0876 9.92822 6.10322 9.92822ZM6.60947 15.272C6.60947 15.5532 6.38447 15.7782 6.10322 15.7782H2.53135C2.2501 15.7782 2.0251 15.5532 2.0251 15.272V11.7001C2.0251 11.4188 2.2501 11.1938 2.53135 11.1938H6.10322C6.38447 11.1938 6.60947 11.4188 6.60947 11.7001V15.272Z" fill="" />
                     <path d="M15.4689 9.92822H11.8971C10.9408 9.92822 10.1533 10.7157 10.1533 11.672V15.2438C10.1533 16.2001 10.9408 16.9876 11.8971 16.9876H15.4689C16.4252 16.9876 17.2127 16.2001 17.2127 15.2438V11.7001C17.2127 10.7157 16.4252 9.92822 15.4689 9.92822ZM15.9752 15.272C15.9752 15.5532 15.7502 15.7782 15.4689 15.7782H11.8971C11.6158 15.7782 11.3908 15.5532 11.3908 15.272V11.7001C11.3908 11.4188 11.6158 11.1938 11.8971 11.1938H15.4689C15.7502 11.1938 15.9752 11.4188 15.9752 11.7001V15.272Z" fill="" />
                   </svg>
-                  {label('Dashboard Geral')}
+                  {label('Dashboard SINAN')}
                 </NavLink>
               </li>
 
               <li>
-                <NavLink to="/dashboard/dadosGeograficos" title={tip('Dados Geográficos')} className={({ isActive }) => navItem(isActive)}>
+                <NavLink to="/dashboard/dadosGeograficos" title={tip('Mapa de Calor')} className={({ isActive }) => navItem(isActive)}>
                   <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="" />
                   </svg>
-                  {label('Dados Geográficos')}
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink to="/dashboard/previsaoCasos" title={tip('Previsão de Casos')} className={({ isActive }) => navItem(isActive)}>
-                  <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
-                    <path d="M3 3v18h18v-2H5V3H3zm2 15l3.5-3.5L12 18l4-6 4 8H5v-2z" fill="" />
-                  </svg>
-                  {label('Previsão de Casos')}
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink to="/lira/dashboard" title={tip('Dashboard LIRA')} className={({ isActive }) => navItem(isActive)}>
-                  <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="" />
-                  </svg>
-                  {label('Dashboard LIRA')}
+                  {label('Mapa de Calor')}
                 </NavLink>
               </li>
 
@@ -169,6 +160,31 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
                   </NavLink>
                 </li>
               )}
+            </ul>
+          </div>
+
+          {/* Separador */}
+          <div className="my-3 border-t border-white opacity-20" />
+
+          {/* LIRA */}
+          <div>
+            <h3
+              className={`mb-2 ml-2 text-xs font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
+                sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:mb-0' : 'opacity-100'
+              }`}
+            >
+              LIRA
+            </h3>
+
+            <ul className="flex flex-col gap-1.5">
+              <li>
+                <NavLink to="/lira/dashboard" title={tip('Dashboard LIRA')} className={({ isActive }) => navItem(isActive)}>
+                  <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="" />
+                  </svg>
+                  {label('Dashboard LIRA')}
+                </NavLink>
+              </li>
 
               <li>
                 <NavLink to="/lira/carregar" title={tip('Carregar Dados LIRA')} className={({ isActive }) => navItem(isActive)}>
@@ -178,27 +194,39 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
                   {label('Carregar Dados LIRA')}
                 </NavLink>
               </li>
-
-              <li>
-                <NavLink to="/dashboard/determinantesSociais" title={tip('Determinantes Sociais')} className={({ isActive }) => navItem(isActive)}>
-                  <IconHeartStar size={18} className="shrink-0" />
-                  {label('Determinantes Sociais')}
-                </NavLink>
-              </li>
             </ul>
           </div>
+
+          {/* Separador */}
+          <div className="my-3 border-t border-white opacity-20" />
 
           {/* OUTROS */}
           <div>
             <h3
-              className={`mb-4 ml-2 text-sm font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
+              className={`mb-2 ml-2 text-xs font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
                 sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:mb-0' : 'opacity-100'
               }`}
             >
               OUTROS
             </h3>
 
-            <ul className="mb-6 flex flex-col gap-1.5">
+            <ul className="flex flex-col gap-1.5">
+              <li>
+                <NavLink to="/dashboard/determinantesSociais" title={tip('Dashboard Determinantes')} className={({ isActive }) => navItem(isActive)}>
+                  <IconHeartStar size={18} className="shrink-0" />
+                  {label('Dashboard Determinantes')}
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink to="/dashboard/previsaoCasos" title={tip('Previsão de Casos')} className={({ isActive }) => navItem(isActive)}>
+                  <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
+                    <path d="M3.5 18.5l6-6 4 4L22 6.92M22 6.92V12m0-5.08H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                  </svg>
+                  {label('Previsão de Casos')}
+                </NavLink>
+              </li>
+
               {!isAuthenticated && (
                 <li>
                   <NavLink to="/auth/login" title={tip('Fazer Login')} className={({ isActive }) => navItem(isActive)}>
