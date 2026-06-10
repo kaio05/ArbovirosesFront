@@ -9,6 +9,7 @@ import { countBySexoOptions, mountDonutCountBySexo } from '../../service/compone
 import { countByAgeRangeOptions, mountColumnCountByAgeRange } from '../../service/components/CountByAgeRange';
 import YearSelector from '../../components/Forms/SelectGroup/YearSelector';
 import AgravoSelector from '../../components/Forms/SelectGroup/AgravoSelector';
+import DengueTypeSelector from '../../components/Forms/SelectGroup/DengueTypeSelector';
 import DashboardScopeSelector from '../../components/Forms/SelectGroup/DashboardScopeSelector';
 import AgravoAccumulatedLineChart from '../../components/Charts/AgravoAccumulatedLineChart';
 import { countByEpidemiologicalWeekAccumulatedOptions, mountAgravoLineAccumulatedData } from '../../service/components/EpidemiologicalWeekAccumulated';
@@ -40,22 +41,21 @@ const App: React.FC = () => {
   const [neighborhoodApiData, setNeighborhoodApiData] = useState<NeighborhoodInfo[]>([])
   const [minYear, setMinYear] = useState<number | undefined>(undefined)
   const [loading, setLoading] = useState<boolean>(true)
+  const [hasLoaded, setHasLoaded] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [initialWeek, setInitialWeek] = useState<string>('')
   const [finalWeek, setFinalWeek] = useState<string>('')
   const [downloadError, setDownloadError] = useState<string | null>(null)
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null)
   const [downloadingPdf, setDownloadingPdf] = useState<boolean>(false)
-  const [agravoSelected, setAgravoSelected] = useState<string>(() => {
-    const savedScope = localStorage.getItem('dashboardScopeSelected');
+  const DENGUE_TIPOS = ['dengue_geral', 'dengue_classica', 'dengue_alarmante', 'dengue_grave'];
+  const [agravoBase, setAgravoBase] = useState<string>(() => {
     const savedAgravo = localStorage.getItem('agravoSelected') || '';
-    const subtipos = ['dengue_classica', 'dengue_alarmante', 'dengue_grave'];
-    if (savedScope === 'confirmados') {
-      return subtipos.includes(savedAgravo) || ['zika', 'chikungunya'].includes(savedAgravo)
-        ? savedAgravo
-        : 'dengue_classica';
-    }
-    return ['dengue', 'zika', 'chikungunya'].includes(savedAgravo) ? savedAgravo : 'dengue';
+    return ['zika', 'chikungunya'].includes(savedAgravo) ? savedAgravo : 'dengue';
+  });
+  const [dengueType, setDengueType] = useState<string>(() => {
+    const savedAgravo = localStorage.getItem('agravoSelected') || '';
+    return DENGUE_TIPOS.includes(savedAgravo) ? savedAgravo : 'dengue_geral';
   });
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
@@ -81,14 +81,17 @@ const App: React.FC = () => {
     return savedScope === 'confirmados' || savedScope === 'obitos' ? savedScope : 'notificados';
   });
 
-  const DENGUE_SUBTIPOS = ['dengue_classica', 'dengue_alarmante', 'dengue_grave'];
+  const agravoEfetivo = agravoBase === 'dengue' ? dengueType : agravoBase;
 
-  const handleScopeChange = (newScope: DashboardScope) => {
-    setScopeSelected(newScope);
-    if (newScope === 'confirmados' && agravoSelected === 'dengue') {
-      setAgravoSelected('dengue_classica');
-    } else if (newScope !== 'confirmados' && DENGUE_SUBTIPOS.includes(agravoSelected)) {
-      setAgravoSelected('dengue');
+  const handleDengueTypeChange = (novoTipo: string) => {
+    setDengueType(novoTipo);
+    setScopeSelected(novoTipo === 'dengue_geral' ? 'notificados' : 'confirmados');
+  };
+
+  const handleScopeChange = (novoScope: DashboardScope) => {
+    setScopeSelected(novoScope);
+    if (novoScope === 'obitos') {
+      setDengueType('dengue_geral');
     }
   };
   
@@ -107,28 +110,29 @@ const App: React.FC = () => {
       
       try {
         await Promise.allSettled([
-          mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoSelected, undefined, scopeSelected),
-          mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoSelected, undefined, scopeSelected),
-          mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoSelected, undefined, scopeSelected),
-          mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoSelected, undefined, scopeSelected),
-          mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoSelected, scopeSelected),
-          affectedNeighborhoodCount(setAffectedNeighborhoods, yearSelected, agravoSelected, scopeSelected),
-          notificationsCountData(setNotificationsCount, yearSelected, agravoSelected, undefined, scopeSelected),
+          mountAgravoLineData(setAgravoLineSeries, yearSelected, agravoEfetivo, undefined, scopeSelected),
+          mountAgravoLineAccumulatedData(setAgravoLineAccumulatedSeries, yearSelected, agravoEfetivo, undefined, scopeSelected),
+          mountDonutCountBySexo(setCountBySexoSeries, yearSelected, agravoEfetivo, undefined, scopeSelected),
+          mountColumnCountByAgeRange(setAgeRangeCategories, yearSelected, agravoEfetivo, undefined, scopeSelected),
+          mountNeighborhoodData(setNeighborhoodApiData, yearSelected, agravoEfetivo, scopeSelected),
+          affectedNeighborhoodCount(setAffectedNeighborhoods, yearSelected, agravoEfetivo, scopeSelected),
+          notificationsCountData(setNotificationsCount, yearSelected, agravoEfetivo, undefined, scopeSelected),
         ]);
-        
+
         localStorage.setItem('yearSelected', yearSelected);
-        localStorage.setItem('agravoSelected', agravoSelected);
+        localStorage.setItem('agravoSelected', agravoEfetivo);
         localStorage.setItem('dashboardScopeSelected', scopeSelected);
       } catch (err) {
         console.error('Erro ao carregar dados:', err);
         setError('Não foi possível carregar os dados. Por favor, tente novamente.');
       } finally {
         setLoading(false);
+        setHasLoaded(true);
       }
     };
 
     loadData();
-  }, [yearSelected, agravoSelected, scopeSelected])
+  }, [yearSelected, agravoEfetivo, scopeSelected])
 
   const handleRetry = () => {
     setError(null);
@@ -171,7 +175,7 @@ const App: React.FC = () => {
     try {
       await downloadNeighborhoodWeeklyPdfReport({
         yearSelected,
-        agravoSelected,
+        agravoSelected: agravoEfetivo,
         initialWeek: normalizedInitialWeek,
         finalWeek: normalizedFinalWeek,
         scopeSelected,
@@ -186,7 +190,7 @@ const App: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (loading && !hasLoaded) {
     return (
       <DefaultLayout>
         <div className="flex items-center justify-center min-h-screen">
@@ -245,11 +249,23 @@ const App: React.FC = () => {
           setScopeSelected={handleScopeChange}
         />
         <AgravoSelector
-          agravoSelected={agravoSelected}
-          setAgravoSelected={setAgravoSelected}
-          scopeSelected={scopeSelected}
+          agravoSelected={agravoBase}
+          setAgravoSelected={setAgravoBase}
         />
+        {agravoBase === 'dengue' && (
+          <DengueTypeSelector
+            value={dengueType}
+            setValue={handleDengueTypeChange}
+          />
+        )}
       </div>
+      <div className={`relative transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
+      {loading && (
+        <div className="pointer-events-none absolute right-1 -top-1 z-10 flex items-center gap-2 text-sm font-medium text-body dark:text-bodydark">
+          <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-primary"></div>
+          Atualizando...
+        </div>
+      )}
       <div className='flex flex-col md:flex-row gap-4'>
         <CountCard
           title={scopeSelected === 'confirmados' ? 'Casos confirmados' : scopeSelected === 'obitos' ? 'Óbitos' : 'Notificações'}
@@ -366,10 +382,11 @@ const App: React.FC = () => {
             )}
           </div>
 
-          <BaseTable 
+          <BaseTable
             neighborhoodData={neighborhoodApiData}
           />
         </div>
+      </div>
       </div>
     </DefaultLayout>
   );
