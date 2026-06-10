@@ -48,14 +48,17 @@ const App: React.FC = () => {
   const [downloadError, setDownloadError] = useState<string | null>(null)
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null)
   const [downloadingPdf, setDownloadingPdf] = useState<boolean>(false)
-  const DENGUE_TIPOS = ['dengue_geral', 'dengue_classica', 'dengue_alarmante', 'dengue_grave'];
+  const DENGUE_SUBTIPOS = ['dengue_classica', 'dengue_alarmante', 'dengue_grave'];
   const [agravoBase, setAgravoBase] = useState<string>(() => {
     const savedAgravo = localStorage.getItem('agravoSelected') || '';
     return ['zika', 'chikungunya'].includes(savedAgravo) ? savedAgravo : 'dengue';
   });
   const [dengueType, setDengueType] = useState<string>(() => {
     const savedAgravo = localStorage.getItem('agravoSelected') || '';
-    return DENGUE_TIPOS.includes(savedAgravo) ? savedAgravo : 'dengue_geral';
+    const savedScope = localStorage.getItem('dashboardScopeSelected');
+    if (DENGUE_SUBTIPOS.includes(savedAgravo)) return savedAgravo;
+    // "Total Notificados"/"Total Confirmados" enviam `dengue` puro; o escopo salvo desambigua.
+    return savedScope === 'confirmados' ? 'dengue_total_confirmados' : 'dengue_total_notificados';
   });
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
@@ -81,17 +84,25 @@ const App: React.FC = () => {
     return savedScope === 'confirmados' || savedScope === 'obitos' ? savedScope : 'notificados';
   });
 
-  const agravoEfetivo = agravoBase === 'dengue' ? dengueType : agravoBase;
+  // "Total Notificados" e "Total Confirmados" enviam `dengue` puro (sem filtro de
+  // classificação); quem define a abrangência é o escopo. Sob "Casos confirmados"
+  // (= classificacao IN 10,11,12,13) isso dá a soma das dengues confirmadas.
+  // Os subtipos específicos mantêm seu próprio filtro de classificação.
+  const agravoEfetivo = agravoBase === 'dengue'
+    ? (DENGUE_SUBTIPOS.includes(dengueType) ? dengueType : 'dengue')
+    : agravoBase;
 
   const handleDengueTypeChange = (novoTipo: string) => {
     setDengueType(novoTipo);
-    setScopeSelected(novoTipo === 'dengue_geral' ? 'notificados' : 'confirmados');
+    setScopeSelected(novoTipo === 'dengue_total_notificados' ? 'notificados' : 'confirmados');
   };
 
   const handleScopeChange = (novoScope: DashboardScope) => {
     setScopeSelected(novoScope);
-    if (novoScope === 'obitos') {
-      setDengueType('dengue_geral');
+    if (novoScope === 'notificados' || novoScope === 'obitos') {
+      setDengueType('dengue_total_notificados');
+    } else if (novoScope === 'confirmados' && dengueType === 'dengue_total_notificados') {
+      setDengueType('dengue_total_confirmados');
     }
   };
   

@@ -25,8 +25,11 @@ const DengueTypeSelector: React.FC<DengueTypeSelectorProps> = ({ value, setValue
             isOptionSelected ? 'text-black dark:text-white' : ''
           }`}
         >
-          <option value={'dengue_geral'} className="text-body dark:text-bodydark">
-            Dengue Geral
+          <option value={'dengue_total_notificados'} className="text-body dark:text-bodydark">
+            Total Notificados
+          </option>
+          <option value={'dengue_total_confirmados'} className="text-body dark:text-bodydark">
+            Total Confirmados
           </option>
           <option value={'dengue_classica'} className="text-body dark:text-bodydark">
             Dengue Clássica

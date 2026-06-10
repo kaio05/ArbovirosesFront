@@ -11,7 +11,8 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [agravoSelected, setAgravoSelected] = useState<string>(() => {
-    return localStorage.getItem('agravoSelected') || 'dengue_geral';
+    const saved = localStorage.getItem('agravoSelected') || 'dengue';
+    return ['zika', 'chikungunya'].includes(saved) ? saved : 'dengue';
   });
 
   const [yearSelected, setYearSelected] = useState<string>(() => {

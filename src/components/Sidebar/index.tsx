@@ -45,15 +45,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
   }
 
   // Classes reutilizáveis para cada item de navegação
+  // O "recolhido" (só ícones) é um recurso de desktop → escopar ao breakpoint lg.
+  // No menu flutuante (mobile/zoom) os itens sempre mostram texto e alinhamento normal.
   const navItem = (isActive: boolean) =>
     `group relative flex items-center rounded-sm py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-      sidebarCollapsed ? 'justify-center px-2' : 'gap-2.5 px-4'
+      sidebarCollapsed ? 'gap-2.5 px-4 lg:justify-center lg:gap-0 lg:px-2' : 'gap-2.5 px-4'
     } ${isActive ? 'bg-graydark dark:bg-meta-4' : ''}`;
 
   const label = (text: string) => (
     <span
       className={`whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
-        sidebarCollapsed ? 'w-0 opacity-0' : 'opacity-100'
+        sidebarCollapsed ? 'lg:w-0 lg:opacity-0' : 'opacity-100'
       }`}
     >
       {text}

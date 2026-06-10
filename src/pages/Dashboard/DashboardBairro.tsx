@@ -39,7 +39,8 @@ const DashboardBairro: React.FC = () => {
   const [agravoLineAccumulatedSeries, setAgravoLineAccumulatedSeries] = useState<any>([])
   const [notificationsCount, setNotificationsCount] = useState<any>(0);
   const [agravoSelected, setAgravoSelected] = useState<string>(() => {
-    return localStorage.getItem('agravoSelected') || 'dengue_geral';
+    const saved = localStorage.getItem('agravoSelected') || 'dengue';
+    return ['zika', 'chikungunya'].includes(saved) ? saved : 'dengue';
   });
   const [yearSelected, setYearSelected] = useState<string>(() => {
     return localStorage.getItem('yearSelected') || new Date().getFullYear().toString();
