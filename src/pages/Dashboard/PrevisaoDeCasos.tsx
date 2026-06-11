@@ -8,6 +8,8 @@ import DefaultButton from '../../components/Forms/Buttons/DefaultButton';
 import { postApiData } from '../../service/api/fetchApiData';
 import YearMultiselect from '../../components/Forms/SelectGroup/MultiYearSelector';
 
+const pythonApiBaseUrl = process.env.REACT_APP_PYTHON_API_URL ?? "";
+
 const App: React.FC = () => {
   const [agravoLineSeries, setAgravoLineSeries] = useState<any>([])
   const [years, setYears] = useState<string[]>(() => {
@@ -52,7 +54,7 @@ const App: React.FC = () => {
 
   async function clearPrevisionData() {
     try {
-      await postApiData('/clear', {}, 'POST', 'http://localhost:8000');
+      await postApiData('/clear', {}, 'POST', pythonApiBaseUrl);
       setAgravoLineSeries([]);
     } catch (error) {
       console.error("Erro ao limpar dados de previsão:", error);

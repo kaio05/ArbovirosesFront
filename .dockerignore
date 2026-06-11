@@ -1,0 +1,13 @@
+.git
+.gitignore
+.DS_Store
+.claude
+.firebase
+dist
+node_modules
+*.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
