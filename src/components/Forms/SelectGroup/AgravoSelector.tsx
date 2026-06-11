@@ -11,7 +11,7 @@ const AgravoSelector: React.FC<AgravoSelectorProps> = ({agravoSelected, setAgrav
   const changeTextColor = () => {
     setIsOptionSelected(true);
   };
-  
+
   return (
     <div className="mb-4.5">
       <div className="relative z-20 bg-transparent dark:bg-form-input">
@@ -25,15 +25,15 @@ const AgravoSelector: React.FC<AgravoSelectorProps> = ({agravoSelected, setAgrav
             isOptionSelected ? 'text-black dark:text-white' : ''
           }`}
         >
-            <option value={'dengue'} className="text-body dark:text-bodydark">
-                Dengue
-            </option>
-            <option value={'zika'} className="text-body dark:text-bodydark">
-                Zika
-            </option>
-            <option value={'chikungunya'} className="text-body dark:text-bodydark">
-                Chikungunya
-            </option>
+          <option value={'dengue'} className="text-body dark:text-bodydark">
+            Dengue
+          </option>
+          <option value={'zika'} className="text-body dark:text-bodydark">
+            Zika
+          </option>
+          <option value={'chikungunya'} className="text-body dark:text-bodydark">
+            Chikungunya
+          </option>
         </select>
       </div>
     </div>
