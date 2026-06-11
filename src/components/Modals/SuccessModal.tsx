@@ -10,6 +10,7 @@ export function SuccessModal({openModal, handleModalClose, message, position} : 
         position={position}
         size="md"
         onClose={() => handleModalClose()}
+        className="md:ml-64 drop-shadow-xl"
         >
         <Modal.Body>
           <div className="text-center">

@@ -14,6 +14,7 @@ import CarregarLira from './pages/Lira/CarregarLira';
 import DashboardLira from './pages/Lira/DashboardLira';
 import DeterminantesSociais from './pages/Dashboard/DeterminantesSociais';
 import GerenciarDados from './pages/Dashboard/GerenciarDados';
+import UploadDeterminantes from './pages/Dashboard/UploadDeterminantes';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -79,6 +80,15 @@ function App() {
               <PageTitle title="Determinantes sociais"/>
               <DeterminantesSociais />
             </>
+          }
+        />
+        <Route 
+          path="/uploadDeterminantes"
+          element={
+            <ProtectedRoute>
+              <PageTitle title="Importar Determinantes sociais"/>
+              <UploadDeterminantes />
+            </ProtectedRoute>
           }
         />
         <Route 

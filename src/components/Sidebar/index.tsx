@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { IconHeartStar } from '@tabler/icons-react';
+import { IconFileUpload, IconFileUploadFilled, IconHeartStar, IconUpload } from '@tabler/icons-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
@@ -219,7 +219,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
                   {label('Dashboard Determinantes')}
                 </NavLink>
               </li>
+              {
+                isAuthenticated && (
 
+                  <li>
+                    <NavLink
+                      to="/uploadDeterminantes"
+                      title={tip('Importar Determinantes')}
+                      className={({ isActive }) => navItem(isActive)}
+                        >
+                      <IconFileUploadFilled />
+                      {label('Importar Determinantes')}
+                    </NavLink>
+                  </li>
+                )
+              }
               <li>
                 <NavLink to="/dashboard/previsaoCasos" title={tip('Previsão de Casos')} className={({ isActive }) => navItem(isActive)}>
                   <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
