@@ -5,7 +5,7 @@ const baseUrl = process.env.REACT_APP_API_URL ?? "";
 // Create axios instance
 const api = axios.create({
     baseURL: baseUrl,
-    timeout: 10000, // 10 second timeout
+    timeout: 600000, // 10 second timeout
 });
 
 // Flag to prevent multiple simultaneous refresh attempts
