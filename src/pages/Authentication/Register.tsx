@@ -15,6 +15,7 @@ const SignUp: React.FC = () => {
   const [name, setName] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [confirmPassword, setConfirmPassword] = useState<string>("")
+  const [role, setRole] = useState<'USER' | 'ADMIN'>("USER")
   const [successModalOpen, setSucessModalOpen] = useState<boolean>(false)
   const [errorModalOpen, setErrorModalOpen] = useState<boolean>(false)
   const [loadingData, setLoadingData] = useState<boolean>(false)
@@ -23,7 +24,8 @@ const SignUp: React.FC = () => {
     cpf: cpf,
     fullName: name,
     password: password,
-    confirmPassword: confirmPassword
+    confirmPassword: confirmPassword,
+    role: role
   })
 
   function handleSuccessModalClose() 
@@ -53,7 +55,7 @@ const SignUp: React.FC = () => {
 
     setFormData({
       ...formData,
-      fullName: name
+      fullName: event.target.value
     })
   }
   
@@ -78,6 +80,16 @@ const SignUp: React.FC = () => {
     })
   }
 
+  function handleSetRole(event: React.ChangeEvent<HTMLSelectElement>) {
+    const selectedRole = event.target.value === 'ADMIN' ? 'ADMIN' : 'USER';
+    setRole(selectedRole);
+
+    setFormData({
+      ...formData,
+      role: selectedRole
+    });
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) 
   {
     try {
@@ -96,12 +108,14 @@ const SignUp: React.FC = () => {
           fullName: "",
           password: "",
           confirmPassword: "",
+          role: "USER",
         })
 
         setCpf("")
         setName("")
         setPassword("")
         setConfirmPassword("")
+        setRole("USER")
       }
 
     } catch (error: AxiosError | any) {
@@ -403,6 +417,20 @@ const SignUp: React.FC = () => {
                       </p>
                     )
                   }
+                </div>
+
+                <div className="mb-6">
+                  <label className="mb-2.5 block font-medium text-black dark:text-white">
+                    Tipo de acesso
+                  </label>
+                  <select
+                    value={role}
+                    onChange={handleSetRole}
+                    className="w-full rounded-lg border border-stroke bg-transparent py-4 px-6 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  >
+                    <option value="USER">Usuario comum</option>
+                    <option value="ADMIN">Administrador</option>
+                  </select>
                 </div>
 
                 <div className="mb-5">
