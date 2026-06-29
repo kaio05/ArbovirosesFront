@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { IconFileUpload, IconFileUploadFilled, IconHeartStar, IconUpload } from '@tabler/icons-react';
+import { IconFileUploadFilled, IconHeartStar } from '@tabler/icons-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
@@ -76,7 +76,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
         {/* Botão colapso — desktop */}
         <button
           onClick={toggleCollapse}
-          title={sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}
+          title={sidebarCollapsed ? 'Expandir menu' : 'Menu'}
           className={`hidden lg:flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-bodydark2 hover:bg-graydark hover:text-white transition-all duration-200 ${
             sidebarCollapsed ? 'w-full justify-center' : ''
           }`}
@@ -87,7 +87,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
           >
             <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
           </svg>
-          {!sidebarCollapsed && <span>Recolher</span>}
+          {!sidebarCollapsed && <span>Menu</span>}
         </button>
 
         {/* Botão fechar — mobile */}
@@ -107,19 +107,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
 
       {/* ── Menu ── */}
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-        <nav className="mt-5 py-4 px-2 lg:mt-9">
-
-          {/* Título MENU — centralizado */}
-          <h3
-            className={`mb-4 text-sm font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
-              sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:mb-0' : 'opacity-100 text-center'
-            }`}
-          >
-            MENU
-          </h3>
+        <nav className="mt-2 py-4 px-2 lg:mt-4">
 
           {/* SINAN */}
-          <div>
+          <div className="pt-2">
             <h3
               className={`mb-2 ml-2 text-xs font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
                 sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:mb-0' : 'opacity-100'
