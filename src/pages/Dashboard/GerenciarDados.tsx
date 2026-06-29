@@ -5,6 +5,7 @@ import api from '../../service/api/Api';
 import { SuccessModal } from '../../components/Modals/SuccessModal';
 import { downloadErrorsPdfReport } from '../../service/components/ErrorsPdfReport';
 import { DatePickerBR } from '../../components/Forms/Inputs/DatePickerBR';
+import { MAX_UPLOAD_LABEL, validateUploadFile } from '../../common/input/InputSecurity';
 
 type Tab = 'upload' | 'erros';
 type FileType = 'xlsx' | 'csv' | 'dbf';
@@ -130,9 +131,10 @@ export default function GerenciarDados() {
         setAsyncPending(false);
         const uploaded = event.target.files?.[0];
         if (uploaded) {
-            const ext = uploaded.name.split('.').pop()?.toLowerCase();
-            if (ext !== fileType) {
-                setUploadError(`O arquivo precisa estar no formato .${fileType}`);
+            const validationError = validateUploadFile(uploaded, [fileType]);
+            if (validationError) {
+                setUploadError(validationError);
+                event.target.value = '';
                 return;
             }
             setFile(uploaded);
@@ -335,6 +337,7 @@ export default function GerenciarDados() {
                                 />
                             </label>
                             {fileName && <p className="mt-2 text-green-600 dark:text-meta-3 font-medium">Arquivo selecionado: {fileName}</p>}
+                            <p className="mt-2 text-xs text-gray-500 dark:text-bodydark2">Tamanho maximo: {MAX_UPLOAD_LABEL}.</p>
                             {uploadError && <p className="mt-3 text-red-600 dark:text-meta-1">{uploadError}</p>}
                         </div>
 

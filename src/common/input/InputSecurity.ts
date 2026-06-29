@@ -38,6 +38,10 @@ export function sanitizeDateBR(value: string): string {
 }
 
 export function validateUploadFile(file: File, allowedExtensions: string[]): string | null {
+  if (file.size <= 0) {
+    return 'Arquivo nao pode ser vazio.';
+  }
+
   if (file.size > MAX_UPLOAD_BYTES) {
     return `Arquivo excede o tamanho maximo permitido de ${MAX_UPLOAD_LABEL}.`;
   }

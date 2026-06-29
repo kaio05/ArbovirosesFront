@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import api from '../../service/api/Api';
+import { MAX_UPLOAD_LABEL, validateUploadFile } from '../../common/input/InputSecurity';
 
 const CarregarLira: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -30,9 +31,18 @@ const CarregarLira: React.FC = () => {
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setFile(event.target.files[0]);
-      setMessage(''); // Clear previous messages
+    const uploaded = event.target.files?.[0];
+    if (uploaded) {
+      const validationError = validateUploadFile(uploaded, ['xlsx']);
+      if (validationError) {
+        setFile(null);
+        setMessage(validationError);
+        event.target.value = '';
+        return;
+      }
+
+      setFile(uploaded);
+      setMessage('');
     }
   };
 
@@ -146,7 +156,7 @@ const CarregarLira: React.FC = () => {
                   className="w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
                 />
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  Apenas arquivos .xlsx são aceitos. Máximo 10MB.
+                  Apenas arquivos .xlsx são aceitos. Máximo {MAX_UPLOAD_LABEL}.
                 </p>
               </div>
 
