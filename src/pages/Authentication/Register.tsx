@@ -5,6 +5,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Logo from '../../images/logo/Logo.png';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { cpfMask } from '../../common/input/CpfMask';
+import { MAX_NAME_LENGTH, MAX_PASSWORD_LENGTH, sanitizePassword, sanitizeSafeText } from '../../common/input/InputSecurity';
 import { SuccessModal } from '../../components/Modals/SuccessModal';
 import api from '../../service/api/Api';
 import { AxiosError } from 'axios';
@@ -45,32 +46,35 @@ const SignUp: React.FC = () => {
 
   async function handleSetName(event: React.ChangeEvent<HTMLInputElement>)
   {
-    setName(event.target.value);
+    const sanitizedName = sanitizeSafeText(event.target.value);
+    setName(sanitizedName);
 
     setFormData({
       ...formData,
-      fullName: event.target.value
+      fullName: sanitizedName
     })
   }
   
 
   async function handleSetPassword(event: React.ChangeEvent<HTMLInputElement>)
   {
-    setPassword(event.target.value);
+    const sanitizedPassword = sanitizePassword(event.target.value);
+    setPassword(sanitizedPassword);
 
     setFormData({
       ...formData,
-      password: event.target.value
+      password: sanitizedPassword
     })
   }
 
   async function handleSetConfirmPassword(event: React.ChangeEvent<HTMLInputElement>)
   {
-    setConfirmPassword(event.target.value);
+    const sanitizedPassword = sanitizePassword(event.target.value);
+    setConfirmPassword(sanitizedPassword);
 
     setFormData({
       ...formData,
-      confirmPassword: event.target.value
+      confirmPassword: sanitizedPassword
     })
   }
 
@@ -325,6 +329,9 @@ const SignUp: React.FC = () => {
                       placeholder="Ex: 123.456.789-10"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={cpf}
+                      inputMode="numeric"
+                      maxLength={14}
+                      autoComplete="username"
                       onChange={handleSetCpf}
                       required
                     />
@@ -341,6 +348,8 @@ const SignUp: React.FC = () => {
                       placeholder="Insira seu nome"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={name}
+                      maxLength={MAX_NAME_LENGTH}
+                      autoComplete="name"
                       onChange={handleSetName}
                       required
                    />
@@ -357,6 +366,9 @@ const SignUp: React.FC = () => {
                       placeholder="Senha"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={password}
+                      minLength={6}
+                      maxLength={MAX_PASSWORD_LENGTH}
+                      autoComplete="new-password"
                       onChange={handleSetPassword}
                       required
                     />
@@ -395,6 +407,9 @@ const SignUp: React.FC = () => {
                       placeholder="Senha"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={confirmPassword}
+                      minLength={6}
+                      maxLength={MAX_PASSWORD_LENGTH}
+                      autoComplete="new-password"
                       onChange={handleSetConfirmPassword}
                       required
                     />
