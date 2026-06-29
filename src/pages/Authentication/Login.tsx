@@ -1,8 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Logo from '../../images/logo/Logo.png';
-import DefaultLayout from '../../layout/DefaultLayout';
+import AuthLayout from '../../layout/AuthLayout';
 import { cpfMask } from '../../common/input/CpfMask';
 import { ErrorModal } from '../../components/Modals/ErrorModal';
 import { useAuth } from '../../contexts/AuthContext';
@@ -79,7 +78,8 @@ const SignIn: React.FC = () => {
         console.log('Login: Calling auth context login');
         await login(data.jwtToken, data.token, {
           fullName: data.fullName,
-          cpf: formData.cpf
+          cpf: data.cpf || formData.cpf,
+          role: data.role === 'ADMIN' ? 'ADMIN' : 'USER'
         });
 
         console.log('Login: Auth context login completed, navigating...');
@@ -124,9 +124,7 @@ const SignIn: React.FC = () => {
   }
 
   return (
-    <DefaultLayout>
-      <Breadcrumb pageName="Logar" />
-
+    <AuthLayout>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
@@ -372,7 +370,7 @@ const SignIn: React.FC = () => {
         message='Erro ao realizar login'
         position='center'
       />
-    </DefaultLayout>
+    </AuthLayout>
   );
 };
 
