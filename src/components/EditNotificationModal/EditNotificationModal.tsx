@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../service/api/Api';
+import { digitsOnly, sanitizeDateBR, sanitizeSafeCode, sanitizeSafeText } from '../../common/input/InputSecurity';
 
 export interface NotificationRecord {
     idNotification: number;
@@ -112,11 +113,11 @@ export default function EditNotificationModal({ record, onClose, onSaved, isErro
                     </div>
                     <div>
                         <label className={labelCls}>Data Notificação (dd/MM/yyyy)</label>
-                        <input value={dtNotific} onChange={e => setDtNotific(e.target.value)} className={inputCls} placeholder="dd/MM/yyyy" />
+                        <input value={dtNotific} onChange={e => setDtNotific(sanitizeDateBR(e.target.value))} className={inputCls} placeholder="dd/MM/yyyy" inputMode="numeric" maxLength={10} />
                     </div>
                     <div>
                         <label className={labelCls}>Data Nascimento (dd/MM/yyyy)</label>
-                        <input value={dtNasc} onChange={e => setDtNasc(e.target.value)} className={inputCls} placeholder="dd/MM/yyyy" />
+                        <input value={dtNasc} onChange={e => setDtNasc(sanitizeDateBR(e.target.value))} className={inputCls} placeholder="dd/MM/yyyy" inputMode="numeric" maxLength={10} />
                     </div>
                     <div>
                         <label className={labelCls}>Sexo</label>
@@ -127,23 +128,23 @@ export default function EditNotificationModal({ record, onClose, onSaved, isErro
                     </div>
                     <div>
                         <label className={labelCls}>Classificação Final</label>
-                        <input value={classiFin} onChange={e => setClassiFin(e.target.value)} className={inputCls} placeholder="Ex: Confirmado" />
+                        <input value={classiFin} onChange={e => setClassiFin(sanitizeSafeCode(e.target.value, 20))} className={inputCls} placeholder="Ex: Confirmado" maxLength={20} />
                     </div>
                     <div>
                         <label className={labelCls}>Evolução</label>
-                        <input value={evolucao} onChange={e => setEvolucao(e.target.value)} className={inputCls} placeholder="Ex: Cura" />
+                        <input value={evolucao} onChange={e => setEvolucao(sanitizeSafeCode(e.target.value, 20))} className={inputCls} placeholder="Ex: Cura" maxLength={20} />
                     </div>
                     <div>
                         <label className={labelCls}>Nome do Bairro</label>
-                        <input value={nmBairro} onChange={e => setNmBairro(e.target.value)} className={inputCls} />
+                        <input value={nmBairro} onChange={e => setNmBairro(sanitizeSafeText(e.target.value, 120))} className={inputCls} maxLength={120} />
                     </div>
                     <div>
                         <label className={labelCls}>ID do Bairro</label>
-                        <input type="number" value={idBairro} onChange={e => setIdBairro(e.target.value)} className={inputCls} />
+                        <input type="number" value={idBairro} onChange={e => setIdBairro(digitsOnly(e.target.value, 6))} className={inputCls} min={0} max={999999} inputMode="numeric" />
                     </div>
                     <div>
                         <label className={labelCls}>Idade</label>
-                        <input type="number" value={idade} onChange={e => setIdade(e.target.value)} className={inputCls} />
+                        <input type="number" value={idade} onChange={e => setIdade(digitsOnly(e.target.value, 3))} className={inputCls} min={0} max={130} inputMode="numeric" />
                     </div>
                 </div>
 
