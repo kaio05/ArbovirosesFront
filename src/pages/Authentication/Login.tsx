@@ -1,5 +1,6 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Logo from '../../images/logo/Logo.png';
 import AuthLayout from '../../layout/AuthLayout';
 import { cpfMask } from '../../common/input/CpfMask';
@@ -21,6 +22,12 @@ const SignIn: React.FC = () => {
     cpf: cpf,
     password: password
   });
+
+  useEffect(() => {
+    if (errorModalOpen && errorMessage) {
+      toast.error(errorMessage);
+    }
+  }, [errorModalOpen, errorMessage]);
 
   function handleErrorModalClose() {
     setErrorModalOpen(false);

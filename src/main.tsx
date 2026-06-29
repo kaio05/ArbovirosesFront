@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Toaster } from 'react-hot-toast';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <Router>
       <ErrorBoundary>
         <AuthProvider>
+          <Toaster position="top-right" />
           <App />
         </AuthProvider>
       </ErrorBoundary>

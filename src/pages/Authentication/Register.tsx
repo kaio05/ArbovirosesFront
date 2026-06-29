@@ -1,11 +1,11 @@
 import React, { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Logo from '../../images/logo/Logo.png';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { cpfMask } from '../../common/input/CpfMask';
 import { SuccessModal } from '../../components/Modals/SuccessModal';
-import { ErrorModal } from '../../components/Modals/ErrorModal';
 import api from '../../service/api/Api';
 import { AxiosError } from 'axios';
 
@@ -17,7 +17,6 @@ const SignUp: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>("")
   const [role, setRole] = useState<'USER' | 'ADMIN'>("USER")
   const [successModalOpen, setSucessModalOpen] = useState<boolean>(false)
-  const [errorModalOpen, setErrorModalOpen] = useState<boolean>(false)
   const [loadingData, setLoadingData] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | false>('')
   const [formData, setFormData] = useState({
@@ -31,11 +30,6 @@ const SignUp: React.FC = () => {
   function handleSuccessModalClose() 
   {
     setSucessModalOpen(false)
-  }
-
-  function handleErrorModalClose() 
-  {
-    setErrorModalOpen(false)
   }
 
   function handleSetCpf(event: React.ChangeEvent<HTMLInputElement>) {
@@ -94,6 +88,21 @@ const SignUp: React.FC = () => {
   {
     try {
       event.preventDefault()
+
+      if (password.length < 6) {
+        const message = 'Senha deve ter pelo menos 6 caracteres';
+        setErrorMessage(message);
+        toast.error(message);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        const message = 'Senhas nao conferem';
+        setErrorMessage(message);
+        toast.error(message);
+        return;
+      }
+
       setLoadingData(true)
       setErrorMessage(false)
 
@@ -120,24 +129,26 @@ const SignUp: React.FC = () => {
 
     } catch (error: AxiosError | any) {
       const response = error.response
+      let message = 'Erro ao realizar o registro'
 
       if (response.status == 400) {
-        const data = await response.config.data
-
-        setErrorMessage(data.errors[0]);
+        message = getApiErrorMessage(response.data, message)
       }
 
-      if (response.status == 401) {
+      if (response.status == 401 || response.status == 403) {
+        message = 'Voce nao tem permissao para usar esse recurso!'
         setErrorMessage("Você não tem permissão para usar esse recurso!")
 
         navigate('/auth/login')
       }
 
       if (response.status == 500) {
+        message = 'Erro ao realizar o registro'
         setErrorMessage("Erro ao realizar o registro")
       }
 
-      setErrorModalOpen(true)
+      setErrorMessage(message)
+      toast.error(message)
     } finally {
       setLoadingData(false);
     }
@@ -462,14 +473,20 @@ const SignUp: React.FC = () => {
         position='center'
       />
 
-      <ErrorModal 
-        openModal={errorModalOpen}
-        handleModalClose={handleErrorModalClose}
-        message='Erro ao realizar o registro!'
-        position='center'
-      />
     </DefaultLayout>
   );
 };
+
+function getApiErrorMessage(data: any, fallback: string) {
+  if (Array.isArray(data?.errors) && data.errors.length > 0) {
+    return data.errors[0];
+  }
+
+  if (typeof data?.message === 'string' && data.message.trim()) {
+    return data.message;
+  }
+
+  return fallback;
+}
 
 export default SignUp;
