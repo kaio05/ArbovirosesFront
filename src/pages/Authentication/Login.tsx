@@ -1,9 +1,10 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
+import toast from 'react-hot-toast';
 import Logo from '../../images/logo/Logo.png';
-import DefaultLayout from '../../layout/DefaultLayout';
+import AuthLayout from '../../layout/AuthLayout';
 import { cpfMask } from '../../common/input/CpfMask';
+import { MAX_PASSWORD_LENGTH, sanitizePassword } from '../../common/input/InputSecurity';
 import { ErrorModal } from '../../components/Modals/ErrorModal';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -23,6 +24,12 @@ const SignIn: React.FC = () => {
     password: password
   });
 
+  useEffect(() => {
+    if (errorModalOpen && errorMessage) {
+      toast.error(errorMessage);
+    }
+  }, [errorModalOpen, errorMessage]);
+
   function handleErrorModalClose() {
     setErrorModalOpen(false);
   }
@@ -39,11 +46,12 @@ const SignIn: React.FC = () => {
   }
 
   async function handleSetPassword(event: React.ChangeEvent<HTMLInputElement>) {
-    setPassword(event.target.value);
+    const sanitizedPassword = sanitizePassword(event.target.value);
+    setPassword(sanitizedPassword);
 
     setFormData({
       ...formData,
-      password: event.target.value
+      password: sanitizedPassword
     });
   }
 
@@ -79,7 +87,8 @@ const SignIn: React.FC = () => {
         console.log('Login: Calling auth context login');
         await login(data.jwtToken, data.token, {
           fullName: data.fullName,
-          cpf: formData.cpf
+          cpf: data.cpf || formData.cpf,
+          role: data.role === 'ADMIN' ? 'ADMIN' : 'USER'
         });
 
         console.log('Login: Auth context login completed, navigating...');
@@ -124,9 +133,7 @@ const SignIn: React.FC = () => {
   }
 
   return (
-    <DefaultLayout>
-      <Breadcrumb pageName="Logar" />
-
+    <AuthLayout>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
@@ -294,6 +301,9 @@ const SignIn: React.FC = () => {
                       placeholder="Ex: 123.456.789-10"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={cpf}
+                      inputMode="numeric"
+                      maxLength={14}
+                      autoComplete="username"
                       required
                       onChange={handleSetCpf}
                     />
@@ -310,6 +320,9 @@ const SignIn: React.FC = () => {
                       placeholder="Senha"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={password}
+                      minLength={6}
+                      maxLength={MAX_PASSWORD_LENGTH}
+                      autoComplete="current-password"
                       required
                       onChange={handleSetPassword}
                     />
@@ -372,7 +385,7 @@ const SignIn: React.FC = () => {
         message='Erro ao realizar login'
         position='center'
       />
-    </DefaultLayout>
+    </AuthLayout>
   );
 };
 

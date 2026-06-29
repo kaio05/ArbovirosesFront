@@ -108,8 +108,10 @@ api.interceptors.response.use(
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("userName");
                 localStorage.removeItem("userCpf");
+                localStorage.removeItem("userRole");
                 localStorage.removeItem("yearSelected");
                 localStorage.removeItem("agravoSelected");
+                localStorage.removeItem("dashboardScopeSelected");
                 
                 if (window.location.pathname !== '/auth/login' && !window.location.pathname.includes('/auth/')) {
                     window.location.href = '/auth/login';

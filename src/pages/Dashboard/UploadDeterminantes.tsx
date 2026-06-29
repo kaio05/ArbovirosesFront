@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import api from '../../service/api/Api';
 import { SuccessModal } from '../../components/Modals/SuccessModal';
+import { MAX_UPLOAD_LABEL, validateUploadFile } from '../../common/input/InputSecurity';
 
 export default function UploadDeterminantes() {
     const navigate = useNavigate();
@@ -21,9 +22,10 @@ export default function UploadDeterminantes() {
         setFileName(null);
         const uploaded = event.target.files?.[0];
         if (uploaded) {
-            const ext = uploaded.name.split('.').pop()?.toLowerCase();
-            if (ext !== 'xlsx') {
-                setUploadError(`O arquivo precisa estar no formato .xlsx`);
+            const validationError = validateUploadFile(uploaded, ['xlsx']);
+            if (validationError) {
+                setUploadError(validationError);
+                event.target.value = '';
                 return;
             }
             setFile(uploaded);
@@ -89,6 +91,7 @@ export default function UploadDeterminantes() {
                             />
                         </label>
                         {fileName && <p className="mt-2 text-green-600 font-medium">Arquivo selecionado: {fileName}</p>}
+                        <p className="mt-2 text-xs text-gray-500">Tamanho maximo: {MAX_UPLOAD_LABEL}.</p>
                         {uploadError && <p className="mt-3 text-red-600">{uploadError}</p>}
                     </div>
 

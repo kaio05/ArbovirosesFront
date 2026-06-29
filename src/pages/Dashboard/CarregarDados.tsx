@@ -4,6 +4,7 @@ import { SuccessModal } from '../../components/Modals/SuccessModal';
 import { useNavigate } from 'react-router-dom';
 import api from '../../service/api/Api';
 import gerarArquivoComErros from '../../components/NotificationsWithError/NotificationsWithError';
+import { MAX_UPLOAD_LABEL, validateUploadFile } from '../../common/input/InputSecurity';
 
 type FileType = 'xlsx' | 'csv' | 'dbf';
 
@@ -47,9 +48,10 @@ const CarregarDados: React.FC = () => {
         const uploadedFile = event.target.files?.[0];
 
         if (uploadedFile) {
-            const ext = uploadedFile.name.split('.').pop()?.toLowerCase();
-            if (ext !== fileType) {
-                setErrorMessage(`O arquivo precisa estar no formato .${fileType}`);
+            const validationError = validateUploadFile(uploadedFile, [fileType]);
+            if (validationError) {
+                setErrorMessage(validationError);
+                event.target.value = '';
                 return;
             }
 
@@ -173,6 +175,7 @@ const CarregarDados: React.FC = () => {
                     {fileName && (
                         <p className="mt-2 text-green-600 font-medium">Arquivo selecionado: {fileName}</p>
                     )}
+                    <p className="mt-2 text-xs text-gray-500">Tamanho maximo: {MAX_UPLOAD_LABEL}.</p>
                     {errorMessage && (
                         <div className="mt-3 flex items-center justify-center text-red-600">
                             <span>{errorMessage}</span>

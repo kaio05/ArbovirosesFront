@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { IconFileUpload, IconFileUploadFilled, IconHeartStar, IconUpload } from '@tabler/icons-react';
+import { IconFileUploadFilled, IconHeartStar } from '@tabler/icons-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface SidebarProps {
@@ -12,7 +12,7 @@ interface SidebarProps {
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarCollapsed }: SidebarProps) => {
   const { pathname } = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { isAdmin } = useAuth();
 
   const trigger  = useRef<any>(null);
   const sidebar  = useRef<any>(null);
@@ -76,7 +76,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
         {/* Botão colapso — desktop */}
         <button
           onClick={toggleCollapse}
-          title={sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}
+          title={sidebarCollapsed ? 'Expandir menu' : 'Menu'}
           className={`hidden lg:flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-bodydark2 hover:bg-graydark hover:text-white transition-all duration-200 ${
             sidebarCollapsed ? 'w-full justify-center' : ''
           }`}
@@ -87,7 +87,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
           >
             <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
           </svg>
-          {!sidebarCollapsed && <span>Recolher</span>}
+          {!sidebarCollapsed && <span>Menu</span>}
         </button>
 
         {/* Botão fechar — mobile */}
@@ -107,19 +107,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
 
       {/* ── Menu ── */}
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-        <nav className="mt-5 py-4 px-2 lg:mt-9">
-
-          {/* Título MENU — centralizado */}
-          <h3
-            className={`mb-4 text-sm font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
-              sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:mb-0' : 'opacity-100 text-center'
-            }`}
-          >
-            MENU
-          </h3>
+        <nav className="mt-2 py-4 px-2 lg:mt-4">
 
           {/* SINAN */}
-          <div>
+          <div className="pt-2">
             <h3
               className={`mb-2 ml-2 text-xs font-semibold text-bodydark2 uppercase whitespace-nowrap overflow-hidden transition-all duration-300 ${
                 sidebarCollapsed ? 'lg:opacity-0 lg:h-0 lg:mb-0' : 'opacity-100'
@@ -150,7 +141,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
                 </NavLink>
               </li>
 
-              {isAuthenticated && (
+              {isAdmin && (
                 <li>
                   <NavLink to="/gerenciarDados" title={tip('Gerir Notificações')} className={({ isActive }) => navItem(isActive)}>
                     <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">
@@ -188,14 +179,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
                 </NavLink>
               </li>
 
-              <li>
-                <NavLink to="/lira/carregar" title={tip('Carregar Dados LIRA')} className={({ isActive }) => navItem(isActive)}>
-                  <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 512 512">
-                    <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
-                  </svg>
-                  {label('Carregar Dados LIRA')}
-                </NavLink>
-              </li>
+              {isAdmin && (
+                <li>
+                  <NavLink to="/lira/carregar" title={tip('Carregar Dados LIRA')} className={({ isActive }) => navItem(isActive)}>
+                    <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 512 512">
+                      <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
+                    </svg>
+                    {label('Carregar Dados LIRA')}
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -220,7 +213,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
                 </NavLink>
               </li>
               {
-                isAuthenticated && (
+                isAdmin && (
 
                   <li>
                     <NavLink
@@ -243,26 +236,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, sidebarCollapsed, setSidebarColl
                 </NavLink>
               </li>
 
-              {!isAuthenticated && (
-                <li>
-                  <NavLink to="/auth/login" title={tip('Fazer Login')} className={({ isActive }) => navItem(isActive)}>
-                    <svg className="fill-current shrink-0" width="18" height="19" viewBox="0 0 18 19">
-                      <g clipPath="url(#clip0_130_9814)">
-                        <path d="M12.7127 0.55835H9.53457C8.80332 0.55835 8.18457 1.1771 8.18457 1.90835V3.84897C8.18457 4.18647 8.46582 4.46772 8.80332 4.46772C9.14082 4.46772 9.45019 4.18647 9.45019 3.84897V1.88022C9.45019 1.82397 9.47832 1.79585 9.53457 1.79585H12.7127C13.3877 1.79585 13.9221 2.33022 13.9221 3.00522V15.0709C13.9221 15.7459 13.3877 16.2802 12.7127 16.2802H9.53457C9.47832 16.2802 9.45019 16.2521 9.45019 16.1959V14.2552C9.45019 13.9177 9.16894 13.6365 8.80332 13.6365C8.43769 13.6365 8.18457 13.9177 8.18457 14.2552V16.1959C8.18457 16.9271 8.80332 17.5459 9.53457 17.5459H12.7127C14.0908 17.5459 15.1877 16.4209 15.1877 15.0709V3.03335C15.1877 1.65522 14.0627 0.55835 12.7127 0.55835Z" fill="" />
-                        <path d="M10.4346 8.60205L7.62207 5.7333C7.36895 5.48018 6.97519 5.48018 6.72207 5.7333C6.46895 5.98643 6.46895 6.38018 6.72207 6.6333L8.46582 8.40518H3.45957C3.12207 8.40518 2.84082 8.68643 2.84082 9.02393C2.84082 9.36143 3.12207 9.64268 3.45957 9.64268H8.49395L6.72207 11.4427C6.46895 11.6958 6.46895 12.0896 6.72207 12.3427C6.83457 12.4552 7.00332 12.5114 7.17207 12.5114C7.34082 12.5114 7.50957 12.4552 7.62207 12.3145L10.4346 9.4458C10.6877 9.24893 10.6877 8.85518 10.4346 8.60205Z" fill="" />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_130_9814">
-                          <rect width="18" height="18" fill="white" transform="translate(0 0.052124)" />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                    {label('Fazer Login')}
-                  </NavLink>
-                </li>
-              )}
-
-              {isAuthenticated && (
+              {isAdmin && (
                 <li>
                   <NavLink to="/auth/registrar" title={tip('Registrar Usuário')} className={({ isActive }) => navItem(isActive)}>
                     <svg className="fill-current shrink-0" width="18" height="18" viewBox="0 0 24 24">

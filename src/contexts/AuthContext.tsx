@@ -1,14 +1,18 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+type UserRole = 'USER' | 'ADMIN';
+
 interface User {
   fullName: string;
   cpf: string;
+  role: UserRole;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   isLoading: boolean;
   login: (accessToken: string, refreshToken: string, userData: User) => void;
   logout: () => void;
@@ -35,11 +39,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const accessToken = localStorage.getItem('accessToken');
       const refreshToken = localStorage.getItem('token');
       const userName = localStorage.getItem('userName');
+      const userRole = parseRole(localStorage.getItem('userRole'));
 
       if (accessToken && refreshToken && userName) {
         setUser({ 
           fullName: userName, 
-          cpf: localStorage.getItem('userCpf') || '' 
+          cpf: localStorage.getItem('userCpf') || '',
+          role: userRole
         });
         setIsAuthenticated(true);
       } else {
@@ -61,6 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('token', refreshToken);
       localStorage.setItem('userName', userData.fullName);
       localStorage.setItem('userCpf', userData.cpf);
+      localStorage.setItem('userRole', userData.role);
       
       setUser(userData);
       setIsAuthenticated(true);
@@ -77,8 +84,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
     localStorage.removeItem('userCpf');
+    localStorage.removeItem('userRole');
     localStorage.removeItem('yearSelected');
     localStorage.removeItem('agravoSelected');
+    localStorage.removeItem('dashboardScopeSelected');
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -126,6 +135,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (data.refreshToken) {
           localStorage.setItem('token', data.refreshToken);
         }
+
+        if (data.fullName) {
+          localStorage.setItem('userName', data.fullName);
+        }
+
+        if (data.cpf) {
+          localStorage.setItem('userCpf', data.cpf);
+        }
+
+        if (data.role) {
+          localStorage.setItem('userRole', parseRole(data.role));
+        }
         
         return true;
       } else {
@@ -150,6 +171,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     user,
     isAuthenticated,
+    isAdmin: user?.role === 'ADMIN',
     isLoading,
     login,
     logout,
@@ -172,3 +194,7 @@ export const useAuth = (): AuthContextType => {
 };
 
 export default AuthContext;
+
+function parseRole(role: string | null | undefined): UserRole {
+  return role === 'ADMIN' ? 'ADMIN' : 'USER';
+}

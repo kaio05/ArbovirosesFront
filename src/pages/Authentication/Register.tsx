@@ -1,11 +1,12 @@
 import React, { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Logo from '../../images/logo/Logo.png';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { cpfMask } from '../../common/input/CpfMask';
+import { MAX_NAME_LENGTH, MAX_PASSWORD_LENGTH, sanitizePassword, sanitizeSafeText } from '../../common/input/InputSecurity';
 import { SuccessModal } from '../../components/Modals/SuccessModal';
-import { ErrorModal } from '../../components/Modals/ErrorModal';
 import api from '../../service/api/Api';
 import { AxiosError } from 'axios';
 
@@ -15,25 +16,21 @@ const SignUp: React.FC = () => {
   const [name, setName] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [confirmPassword, setConfirmPassword] = useState<string>("")
+  const [role, setRole] = useState<'USER' | 'ADMIN'>("USER")
   const [successModalOpen, setSucessModalOpen] = useState<boolean>(false)
-  const [errorModalOpen, setErrorModalOpen] = useState<boolean>(false)
   const [loadingData, setLoadingData] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | false>('')
   const [formData, setFormData] = useState({
     cpf: cpf,
     fullName: name,
     password: password,
-    confirmPassword: confirmPassword
+    confirmPassword: confirmPassword,
+    role: role
   })
 
   function handleSuccessModalClose() 
   {
     setSucessModalOpen(false)
-  }
-
-  function handleErrorModalClose() 
-  {
-    setErrorModalOpen(false)
   }
 
   function handleSetCpf(event: React.ChangeEvent<HTMLInputElement>) {
@@ -49,39 +46,67 @@ const SignUp: React.FC = () => {
 
   async function handleSetName(event: React.ChangeEvent<HTMLInputElement>)
   {
-    setName(event.target.value);
+    const sanitizedName = sanitizeSafeText(event.target.value);
+    setName(sanitizedName);
 
     setFormData({
       ...formData,
-      fullName: name
+      fullName: sanitizedName
     })
   }
   
 
   async function handleSetPassword(event: React.ChangeEvent<HTMLInputElement>)
   {
-    setPassword(event.target.value);
+    const sanitizedPassword = sanitizePassword(event.target.value);
+    setPassword(sanitizedPassword);
 
     setFormData({
       ...formData,
-      password: event.target.value
+      password: sanitizedPassword
     })
   }
 
   async function handleSetConfirmPassword(event: React.ChangeEvent<HTMLInputElement>)
   {
-    setConfirmPassword(event.target.value);
+    const sanitizedPassword = sanitizePassword(event.target.value);
+    setConfirmPassword(sanitizedPassword);
 
     setFormData({
       ...formData,
-      confirmPassword: event.target.value
+      confirmPassword: sanitizedPassword
     })
+  }
+
+  function handleSetRole(event: React.ChangeEvent<HTMLSelectElement>) {
+    const selectedRole = event.target.value === 'ADMIN' ? 'ADMIN' : 'USER';
+    setRole(selectedRole);
+
+    setFormData({
+      ...formData,
+      role: selectedRole
+    });
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) 
   {
     try {
       event.preventDefault()
+
+      if (password.length < 6) {
+        const message = 'Senha deve ter pelo menos 6 caracteres';
+        setErrorMessage(message);
+        toast.error(message);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        const message = 'Senhas nao conferem';
+        setErrorMessage(message);
+        toast.error(message);
+        return;
+      }
+
       setLoadingData(true)
       setErrorMessage(false)
 
@@ -96,34 +121,38 @@ const SignUp: React.FC = () => {
           fullName: "",
           password: "",
           confirmPassword: "",
+          role: "USER",
         })
 
         setCpf("")
         setName("")
         setPassword("")
         setConfirmPassword("")
+        setRole("USER")
       }
 
     } catch (error: AxiosError | any) {
       const response = error.response
+      let message = 'Erro ao realizar o registro'
 
       if (response.status == 400) {
-        const data = await response.config.data
-
-        setErrorMessage(data.errors[0]);
+        message = getApiErrorMessage(response.data, message)
       }
 
-      if (response.status == 401) {
+      if (response.status == 401 || response.status == 403) {
+        message = 'Voce nao tem permissao para usar esse recurso!'
         setErrorMessage("Você não tem permissão para usar esse recurso!")
 
         navigate('/auth/login')
       }
 
       if (response.status == 500) {
+        message = 'Erro ao realizar o registro'
         setErrorMessage("Erro ao realizar o registro")
       }
 
-      setErrorModalOpen(true)
+      setErrorMessage(message)
+      toast.error(message)
     } finally {
       setLoadingData(false);
     }
@@ -300,6 +329,9 @@ const SignUp: React.FC = () => {
                       placeholder="Ex: 123.456.789-10"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={cpf}
+                      inputMode="numeric"
+                      maxLength={14}
+                      autoComplete="username"
                       onChange={handleSetCpf}
                       required
                     />
@@ -316,6 +348,8 @@ const SignUp: React.FC = () => {
                       placeholder="Insira seu nome"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={name}
+                      maxLength={MAX_NAME_LENGTH}
+                      autoComplete="name"
                       onChange={handleSetName}
                       required
                    />
@@ -332,6 +366,9 @@ const SignUp: React.FC = () => {
                       placeholder="Senha"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={password}
+                      minLength={6}
+                      maxLength={MAX_PASSWORD_LENGTH}
+                      autoComplete="new-password"
                       onChange={handleSetPassword}
                       required
                     />
@@ -370,6 +407,9 @@ const SignUp: React.FC = () => {
                       placeholder="Senha"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       value={confirmPassword}
+                      minLength={6}
+                      maxLength={MAX_PASSWORD_LENGTH}
+                      autoComplete="new-password"
                       onChange={handleSetConfirmPassword}
                       required
                     />
@@ -405,6 +445,20 @@ const SignUp: React.FC = () => {
                   }
                 </div>
 
+                <div className="mb-6">
+                  <label className="mb-2.5 block font-medium text-black dark:text-white">
+                    Tipo de acesso
+                  </label>
+                  <select
+                    value={role}
+                    onChange={handleSetRole}
+                    className="w-full rounded-lg border border-stroke bg-transparent py-4 px-6 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  >
+                    <option value="USER">Usuario comum</option>
+                    <option value="ADMIN">Administrador</option>
+                  </select>
+                </div>
+
                 <div className="mb-5">
                   <button
                     type="submit"
@@ -434,14 +488,20 @@ const SignUp: React.FC = () => {
         position='center'
       />
 
-      <ErrorModal 
-        openModal={errorModalOpen}
-        handleModalClose={handleErrorModalClose}
-        message='Erro ao realizar o registro!'
-        position='center'
-      />
     </DefaultLayout>
   );
 };
+
+function getApiErrorMessage(data: any, fallback: string) {
+  if (Array.isArray(data?.errors) && data.errors.length > 0) {
+    return data.errors[0];
+  }
+
+  if (typeof data?.message === 'string' && data.message.trim()) {
+    return data.message;
+  }
+
+  return fallback;
+}
 
 export default SignUp;

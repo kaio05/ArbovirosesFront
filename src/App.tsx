@@ -31,123 +31,121 @@ function App() {
   return loading ? (
     <Loader />
   ) : (
-    <>
-      <Routes>
-        <Route
-          index
-          element={
-            <>
-              <PageTitle title="Dashboard Arboviroses" />
-              <DadosGerais />
-            </>
-          }
-        />
-        <Route
-          path='/dashboard/dadosGerais'
-          element={
-            <>
-              <PageTitle title="Dashboard Arboviroses" />
-              <DadosGerais />
-            </>
-          }
-        />
-        <Route
-          path="/gerenciarDados"
-          element={
-            <ProtectedRoute>
-              <PageTitle title="Gerir Notificações" />
-              <GerenciarDados />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/carregarDados"
-          element={<Navigate to="/gerenciarDados" replace />}
-        />
-        <Route 
-          path="/dashboard/previsaoCasos"
-          element={
-            <>
-              <PageTitle title="Previsão de casos"/>
-              <PrevisaoDeCasos />
-            </>
-          }
-        />
-        <Route 
-          path="/dashboard/determinantesSociais"
-          element={
-            <>
-              <PageTitle title="Determinantes sociais"/>
-              <DeterminantesSociais />
-            </>
-          }
-        />
-        <Route 
-          path="/uploadDeterminantes"
-          element={
-            <ProtectedRoute>
-              <PageTitle title="Importar Determinantes sociais"/>
-              <UploadDeterminantes />
-            </ProtectedRoute>
-          }
-        />
-        <Route 
-          path="/dashboard/dadosGeograficos"
-          element={
-            <>
-              <PageTitle title="Dados geográficos"/>
-              <DadosGeograficos />
-            </>
-          }
-        />
-        <Route 
-          path="/dashboard/bairro"
-          element={
-            <>
-              <PageTitle title="Dados do Bairro"/>
-              <DashboardBairro />
-            </>
-          }
-        />
-        <Route
-          path="/lira/carregar"
-          element={
-            <ProtectedRoute>
-              <PageTitle title="Carregar Dados LIRA" />
-              <CarregarLira />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lira/dashboard"
-          element={
-            <>
-              <PageTitle title="Dashboard LIRA" />
-              <DashboardLira />
-            </>
-          }
-        />
-        <Route
-          path="/auth/login"
-          element={
-            <>
-              <PageTitle title="Login" />
-              <SignIn />
-            </>
-          }
-        />
-        <Route
-          path="/auth/registrar"
-          element={
-            <ProtectedRoute>
-              <PageTitle title="Registrar" />
-              <SignUp />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </>
+    <Routes>
+      <Route
+        index
+        element={
+          <ProtectedRoute>
+            <PageTitle title="Dashboard Arboviroses" />
+            <DadosGerais />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/dadosGerais"
+        element={
+          <ProtectedRoute>
+            <PageTitle title="Dashboard Arboviroses" />
+            <DadosGerais />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/gerenciarDados"
+        element={
+          <ProtectedRoute requiredRole="ADMIN">
+            <PageTitle title="Gerir Notificacoes" />
+            <GerenciarDados />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/carregarDados"
+        element={<Navigate to="/gerenciarDados" replace />}
+      />
+      <Route
+        path="/dashboard/previsaoCasos"
+        element={
+          <ProtectedRoute>
+            <PageTitle title="Previsao de casos" />
+            <PrevisaoDeCasos />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/determinantesSociais"
+        element={
+          <ProtectedRoute>
+            <PageTitle title="Determinantes sociais" />
+            <DeterminantesSociais />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/uploadDeterminantes"
+        element={
+          <ProtectedRoute requiredRole="ADMIN">
+            <PageTitle title="Importar Determinantes sociais" />
+            <UploadDeterminantes />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/dadosGeograficos"
+        element={
+          <ProtectedRoute>
+            <PageTitle title="Dados geograficos" />
+            <DadosGeograficos />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/bairro"
+        element={
+          <ProtectedRoute>
+            <PageTitle title="Dados do Bairro" />
+            <DashboardBairro />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/lira/carregar"
+        element={
+          <ProtectedRoute requiredRole="ADMIN">
+            <PageTitle title="Carregar Dados LIRA" />
+            <CarregarLira />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/lira/dashboard"
+        element={
+          <ProtectedRoute>
+            <PageTitle title="Dashboard LIRA" />
+            <DashboardLira />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/auth/login"
+        element={
+          <>
+            <PageTitle title="Login" />
+            <SignIn />
+          </>
+        }
+      />
+      <Route
+        path="/auth/registrar"
+        element={
+          <ProtectedRoute requiredRole="ADMIN">
+            <PageTitle title="Registrar" />
+            <SignUp />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
