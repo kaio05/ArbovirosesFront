@@ -24,6 +24,7 @@ import BairroSelector from '../../components/Forms/SelectGroup/BairroSelector';
 import { useNavigate } from 'react-router-dom';
 
 import { DashboardScope } from '../../service/components/dashboardQueryParams';
+import getApiData from '../../service/api/fetchApiData';
 
 const lineChartOptionsByEpidemiologicalWeek: ApexOptions = countByEpidemiologicalWeekOptions();
 const lineChartOptionsByEpidemiologicalWeekAccumulated: ApexOptions = countByEpidemiologicalWeekAccumulatedOptions();
@@ -107,10 +108,8 @@ const App: React.FC = () => {
   };
   
   useEffect(() => {
-    const baseApi = process.env.REACT_APP_API_URL ?? '';
-    fetch(`${baseApi}/notifications/min-year`)
-      .then(r => r.json())
-      .then(data => { if (data?.data != null) setMinYear(data.data); })
+    getApiData('/notifications/min-year')
+      .then(data => { if (data != null) setMinYear(data); })
       .catch(() => {});
   }, []);
 

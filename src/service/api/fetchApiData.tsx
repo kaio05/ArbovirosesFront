@@ -1,57 +1,50 @@
-async function fetchApi(uri: string)
-{
-    try {
-        const baseApi = process.env.REACT_APP_API_URL ?? ""
-        
-        const apiFetch = await fetch(baseApi + uri)
+import api from './Api';
 
-        return apiFetch
-    } catch (error) {
-        throw error
-    }
+function unwrapApiData(payload: any) {
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    return payload.data;
+  }
+
+  return payload;
 }
 
-export default async function getApiData(uri: string)
-{
+export default async function getApiData(uri: string) {
   try {
-    const response = await fetchApi(uri)
-    const json = await response.json()
-
-    // Unwrap standard { message, data } response envelope
-    if (json && typeof json === 'object' && 'data' in json) {
-      return json.data
-    }
-    return json
+    const response = await api.get(uri);
+    return unwrapApiData(response.data);
   } catch (error) {
-
+    throw error;
   }
 }
 
-async function postfetchApi(uri: string, options?: RequestInit, baseUrl?: string) {
-  try {
-      const baseApi = baseUrl ?? process.env.REACT_APP_API_URL ?? "";
-      const apiFetch = await fetch(baseApi + uri, options);
-      return apiFetch;
-  } catch (error) {
-      throw error;
-  }
+async function postExternalApi(uri: string, options?: RequestInit, baseUrl?: string) {
+  const apiFetch = await fetch(`${baseUrl ?? ''}${uri}`, options);
+  return apiFetch;
 }
 
-export async function postApiData(uri: string, data?: any, method: string = "GET", baseUrl?: string) {
+export async function postApiData(uri: string, data?: any, method: string = 'GET', baseUrl?: string) {
   try {
+    if (baseUrl) {
       const options: RequestInit = {
-          method: method,
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: data ? JSON.stringify(data) : undefined,
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: data ? JSON.stringify(data) : undefined,
       };
 
-      const response = await postfetchApi(uri, options, baseUrl);
-      const responseData = await response.json();
+      const response = await postExternalApi(uri, options, baseUrl);
+      return response.json();
+    }
 
-      return responseData;
+    const response = await api.request({
+      url: uri,
+      method,
+      data,
+    });
+
+    return unwrapApiData(response.data);
   } catch (error) {
-      throw error;
+    throw error;
   }
 }

@@ -1,6 +1,5 @@
+import api from "../api/Api";
 import { DashboardScope } from "./dashboardQueryParams";
-
-const baseApi = process.env.REACT_APP_API_URL ?? "";
 
 interface DownloadNeighborhoodWeeklyPdfParams {
   yearSelected: string;
@@ -28,24 +27,11 @@ export async function downloadNeighborhoodWeeklyPdfReport({
   scopeSelected,
 }: DownloadNeighborhoodWeeklyPdfParams) {
   const queryParams = buildQueryParams({ yearSelected, agravoSelected, initialWeek, finalWeek, scopeSelected });
-  const response = await fetch(`${baseApi}/notifications/report/neighborhood/pdf?${queryParams}`);
+  const response = await api.get(`/notifications/report/neighborhood/pdf?${queryParams}`, {
+    responseType: "blob",
+  });
 
-  if (!response.ok) {
-    let message = "Não foi possível gerar o relatório PDF.";
-
-    try {
-      const errorData = await response.json();
-      if (Array.isArray(errorData?.errors) && errorData.errors.length > 0) {
-        message = errorData.errors[0];
-      }
-    } catch (_error) {
-      // Mantém a mensagem padrão quando a API não retorna JSON.
-    }
-
-    throw new Error(message);
-  }
-
-  const blob = await response.blob();
+  const blob = response.data;
   const downloadUrl = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
 
