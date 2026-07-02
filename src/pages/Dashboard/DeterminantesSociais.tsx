@@ -8,8 +8,7 @@ import { SocialFactorsCard } from "../../components/Cards/SocialDeterminantsCard
 
 
 const DeterminantesSociais: React.FC = () => {
-
-    const neighborhoods = ['Todos', 'BOM JESUS', 'SANTO ANTONIO', 'BOM JARDIM', 'BARROCAS', 'PASSAGEM DE PEDRA', 'ESTRADA DA RAIZ', 'RIACHO GRANDE', 'LAGOA DO MATO', 'PERREIROS', 'BELO HORIZONTE'];
+    const [neighborhoods, setNeighborhoods] = useState<string[]>(['Todos']);
 
     const [neighborhoodSelected, setNeighborhoodSelected] = useState<string>('Todos');
 
@@ -41,6 +40,21 @@ const DeterminantesSociais: React.FC = () => {
         const maxIndex = values.indexOf(Math.max(...values));
         return waterTreatmentLabels[maxIndex];
         }, [waterTreatmentData]);
+
+    useEffect(() => {
+        const loadNeighborhoods = async () => {
+            try {
+                const apiNeighborhoods = await getApiData('/determinantes/neighborhoods');
+                if (Array.isArray(apiNeighborhoods) && apiNeighborhoods.length > 0) {
+                    setNeighborhoods(['Todos', ...apiNeighborhoods]);
+                }
+            } catch (err) {
+                console.error('Erro ao buscar bairros de determinantes: ', err);
+            }
+        };
+
+        loadNeighborhoods();
+    }, []);
 
     useEffect(() => {
         const loadData = async () => {
