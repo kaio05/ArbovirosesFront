@@ -5,7 +5,8 @@ import Loader from './common/Loader';
 import PageTitle from './components/PageTitle';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import SignIn from './pages/Authentication/Login';
-import SignUp from './pages/Authentication/Register';
+import ManageUsers from './pages/Authentication/ManageUsers';
+import Profile from './pages/Profile';
 import DadosGerais from './pages/Dashboard/DadosGerais';
 import PrevisaoDeCasos from './pages/Dashboard/PrevisaoDeCasos';
 import DadosGeograficos from './pages/Dashboard/DadosGeograficos';
@@ -109,6 +110,15 @@ function App() {
         }
       />
       <Route
+        path="/perfil"
+        element={
+          <ProtectedRoute>
+            <PageTitle title="Meu Perfil" />
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/lira/carregar"
         element={
           <ProtectedRoute requiredRole="ADMIN">
@@ -136,13 +146,17 @@ function App() {
         }
       />
       <Route
-        path="/auth/registrar"
+        path="/usuarios"
         element={
           <ProtectedRoute requiredRole="ADMIN">
-            <PageTitle title="Registrar" />
-            <SignUp />
+            <PageTitle title="Gerenciar Usuarios" />
+            <ManageUsers />
           </ProtectedRoute>
         }
+      />
+      <Route
+        path="/auth/registrar"
+        element={<Navigate to="/usuarios" replace />}
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -15,6 +15,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isLoading: boolean;
   login: (accessToken: string, refreshToken: string, userData: User) => void;
+  updateSession: (userData: User, accessToken?: string) => void;
   logout: () => void;
   refreshTokens: () => Promise<boolean>;
 }
@@ -104,6 +105,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateSession = (userData: User, accessToken?: string) => {
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+    }
+
+    localStorage.setItem('userName', userData.fullName);
+    localStorage.setItem('userCpf', userData.cpf);
+    localStorage.setItem('userRole', userData.role);
+    setUser(userData);
+    setIsAuthenticated(true);
+  };
+
   const refreshTokens = async (): Promise<boolean> => {
     try {
       const refreshToken = localStorage.getItem('token');
@@ -174,6 +187,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAdmin: user?.role === 'ADMIN',
     isLoading,
     login,
+    updateSession,
     logout,
     refreshTokens
   };

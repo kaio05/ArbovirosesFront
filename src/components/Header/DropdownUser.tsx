@@ -76,6 +76,33 @@ const DropdownUser = () => {
           dropdownOpen === true ? 'block' : 'hidden'
         }`}
       >
+        <Link
+          to="/perfil"
+          onClick={() => setDropdownOpen(false)}
+          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+        >
+          <svg
+            className="fill-current"
+            width="22"
+            height="22"
+            viewBox="0 0 22 22"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M11 11C13.7614 11 16 8.76142 16 6C16 3.23858 13.7614 1 11 1C8.23858 1 6 3.23858 6 6C6 8.76142 8.23858 11 11 11Z"
+              fill=""
+            />
+            <path
+              d="M10.9999 13C6.58166 13 2.99988 16.134 2.99988 20C2.99988 20.5523 3.44759 21 3.99988 21H17.9999C18.5522 21 18.9999 20.5523 18.9999 20C18.9999 16.134 15.4182 13 10.9999 13Z"
+              fill=""
+            />
+          </svg>
+          Meu perfil
+        </Link>
+
+        <div className="mx-6 border-t border-stroke dark:border-strokedark" />
+
         <button 
           onClick={handleLogout}
           className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
