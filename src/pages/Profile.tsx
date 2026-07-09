@@ -15,7 +15,6 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const passwordChangeRequested = useMemo(
     () => !!(currentPassword || newPassword || confirmNewPassword),
@@ -24,7 +23,6 @@ const Profile = () => {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setErrorMessage(null);
 
     if (!user) {
       return;
@@ -32,17 +30,17 @@ const Profile = () => {
 
     if (passwordChangeRequested) {
       if (!currentPassword) {
-        setErrorMessage('Informe a senha atual para alterar a senha.');
+        toast.error('Informe a senha atual para alterar a senha.');
         return;
       }
 
       if (newPassword.length < 6 || confirmNewPassword.length < 6) {
-        setErrorMessage('A nova senha deve ter pelo menos 6 caracteres.');
+        toast.error('A nova senha deve ter pelo menos 6 caracteres.');
         return;
       }
 
       if (newPassword !== confirmNewPassword) {
-        setErrorMessage('A confirmacao da nova senha nao confere.');
+        toast.error('A confirmação da nova senha não confere.');
         return;
       }
     }
@@ -74,12 +72,12 @@ const Profile = () => {
       setFullName(response.data.fullName);
       toast.success('Perfil atualizado com sucesso.');
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message ||
+      const message = normalizeApiMessage(
         (Array.isArray(error?.response?.data?.errors) ? error.response.data.errors[0] : null) ||
-        'Nao foi possivel atualizar o perfil.';
+        (typeof error?.response?.data?.message === 'string' ? error.response.data.message : null) ||
+        'Não foi possível atualizar o perfil.',
+      );
 
-      setErrorMessage(message);
       toast.error(message);
     } finally {
       setLoading(false);
@@ -97,9 +95,9 @@ const Profile = () => {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">Conta</p>
-              <h2 className="mt-2 text-3xl font-semibold text-black dark:text-white">{user?.fullName ?? 'Usuario'}</h2>
+              <h2 className="mt-2 text-3xl font-semibold text-black dark:text-white">{user?.fullName ?? 'Usuário'}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-bodydark2">
-                Atualize seus dados cadastrais e, se quiser, altere sua senha com confirmacao da senha atual.
+                Atualize seus dados cadastrais e, se quiser, altere sua senha com confirmação da senha atual.
               </p>
             </div>
 
@@ -107,7 +105,7 @@ const Profile = () => {
               <div className="rounded-xl border border-stroke bg-white/90 px-4 py-3 dark:border-strokedark dark:bg-boxdark/70">
                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-bodydark2">Perfil</p>
                 <p className="mt-1 text-sm font-medium text-black dark:text-white">
-                  {user?.role === 'ADMIN' ? 'Administrador' : 'Usuario comum'}
+                  {user?.role === 'ADMIN' ? 'Administrador' : 'Usuário comum'}
                 </p>
               </div>
               <div className="rounded-xl border border-stroke bg-white/90 px-4 py-3 dark:border-strokedark dark:bg-boxdark/70">
@@ -156,7 +154,7 @@ const Profile = () => {
               </div>
 
               <div className="rounded-xl border border-dashed border-stroke bg-gray-50 px-4 py-4 dark:border-strokedark dark:bg-meta-4/20">
-                <p className="text-sm font-medium text-black dark:text-white">Alteracao de senha</p>
+                <p className="text-sm font-medium text-black dark:text-white">Alteração de senha</p>
                 <p className="mt-1 text-sm text-gray-600 dark:text-bodydark2">
                   Preencha os campos abaixo somente se quiser definir uma nova senha.
                 </p>
@@ -172,7 +170,7 @@ const Profile = () => {
                   onChange={(event) => setCurrentPassword(sanitizePassword(event.target.value))}
                   maxLength={MAX_PASSWORD_LENGTH}
                   className={inputClassName}
-                  placeholder="Obrigatoria para trocar a senha"
+                  placeholder="Obrigatória para trocar a senha"
                 />
               </div>
 
@@ -184,7 +182,7 @@ const Profile = () => {
                   onChange={(event) => setNewPassword(sanitizePassword(event.target.value))}
                   maxLength={MAX_PASSWORD_LENGTH}
                   className={inputClassName}
-                  placeholder="Minimo de 6 caracteres"
+                  placeholder="Mínimo de 6 caracteres"
                 />
               </div>
 
@@ -201,15 +199,9 @@ const Profile = () => {
               </div>
             </div>
 
-            {errorMessage && (
-              <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800/60 dark:bg-red-950/30 dark:text-red-300">
-                {errorMessage}
-              </div>
-            )}
-
             <div className="mt-8 flex flex-col gap-3 border-t border-stroke pt-6 dark:border-strokedark sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-gray-600 dark:text-bodydark2">
-                Depois de salvar, seu nome no topo do sistema sera atualizado imediatamente.
+                Depois de salvar, seu nome no topo do sistema será atualizado imediatamente.
               </p>
               <button
                 type="submit"
@@ -222,7 +214,7 @@ const Profile = () => {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
                 )}
-                Salvar alteracoes
+                Salvar alterações
               </button>
             </div>
           </form>
@@ -233,3 +225,14 @@ const Profile = () => {
 };
 
 export default Profile;
+
+function normalizeApiMessage(message: string) {
+  const trimmedMessage = message.trim();
+  const quotedMessage = trimmedMessage.match(/^\d+\s+[A-Z_]+\s+"(.+)"$/);
+
+  if (quotedMessage?.[1]) {
+    return quotedMessage[1];
+  }
+
+  return trimmedMessage;
+}

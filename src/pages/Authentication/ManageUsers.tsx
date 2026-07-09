@@ -33,7 +33,7 @@ export default function ManageUsers() {
       const response = await api.get('/user/manage');
       setUsers(Array.isArray(response.data) ? response.data : []);
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Nao foi possivel carregar os usuarios.');
+      setError(resolveApiMessage(err, 'Não foi possível carregar os usuários.'));
     } finally {
       setLoading(false);
     }
@@ -64,10 +64,10 @@ export default function ManageUsers() {
       setDeletingId(userToDelete.id);
       await api.delete(`/user/${userToDelete.id}`);
       setUsers((current) => current.filter((managedUser) => managedUser.id !== userToDelete.id));
-      toast.success('Usuario removido com sucesso.');
+      toast.success('Usuário removido com sucesso.');
       setUserToDelete(null);
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Nao foi possivel remover o usuario.');
+      toast.error(resolveApiMessage(err, 'Não foi possível remover o usuário.'));
     } finally {
       setDeletingId(null);
     }
@@ -76,7 +76,7 @@ export default function ManageUsers() {
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        <Breadcrumb pageName="Gerenciar Usuarios" />
+        <Breadcrumb pageName="Gerenciar Usuários" />
 
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
@@ -88,7 +88,7 @@ export default function ManageUsers() {
             <p className="mt-2 text-3xl font-semibold text-indigo-700 dark:text-indigo-200">{adminCount}</p>
           </div>
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-800/60 dark:bg-emerald-950/30">
-            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Usuarios comuns</p>
+            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Usuários comuns</p>
             <p className="mt-2 text-3xl font-semibold text-emerald-700 dark:text-emerald-200">{userCount}</p>
           </div>
         </div>
@@ -97,16 +97,16 @@ export default function ManageUsers() {
           <div className="border-b border-stroke px-4 pt-4 dark:border-strokedark sm:px-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <h3 className="text-2xl font-semibold text-primary">Gerenciar Usuarios</h3>
+                <h3 className="text-2xl font-semibold text-primary">Gerenciar Usuários</h3>
                 <p className="mt-1 text-sm text-gray-600 dark:text-bodydark2">
-                  Area exclusiva para admins com listagem, remocao e cadastro de contas.
+                  Área exclusiva para admins com listagem, remoção e cadastro de contas.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-strokedark">
                 {([
-                  ['list', 'Usuarios cadastrados'],
-                  ['register', 'Registrar novo usuario'],
+                  ['list', 'Usuários cadastrados'],
+                  ['register', 'Registrar novo usuário'],
                 ] as [Tab, string][]).map(([currentTab, label]) => (
                   <button
                     key={currentTab}
@@ -129,7 +129,7 @@ export default function ManageUsers() {
               <div className="space-y-5">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                   <div className="w-full lg:max-w-md">
-                    <label className="mb-2 block text-sm font-medium text-black dark:text-white">Buscar usuario</label>
+                    <label className="mb-2 block text-sm font-medium text-black dark:text-white">Buscar usuário</label>
                     <input
                       type="text"
                       value={search}
@@ -162,7 +162,7 @@ export default function ManageUsers() {
                           <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-bodydark2">Nome</th>
                           <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-bodydark2">CPF</th>
                           <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-bodydark2">Perfil</th>
-                          <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-bodydark2">Acoes</th>
+                          <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-bodydark2">Ações</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-stroke bg-white dark:divide-strokedark dark:bg-boxdark">
@@ -178,7 +178,7 @@ export default function ManageUsers() {
                                     ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
                                     : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
                                 }`}>
-                                  {managedUser.role === 'ADMIN' ? 'Administrador' : 'Usuario'}
+                                  {managedUser.role === 'ADMIN' ? 'Administrador' : 'Usuário'}
                                 </span>
                               </td>
                               <td className="px-4 py-4 text-right">
@@ -213,7 +213,7 @@ export default function ManageUsers() {
                               ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
                               : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
                           }`}>
-                            {managedUser.role === 'ADMIN' ? 'Administrador' : 'Usuario'}
+                            {managedUser.role === 'ADMIN' ? 'Administrador' : 'Usuário'}
                           </span>
                         </div>
 
@@ -231,7 +231,7 @@ export default function ManageUsers() {
 
                 {!loading && filteredUsers.length === 0 && (
                   <div className="rounded-xl border border-dashed border-stroke px-6 py-12 text-center text-gray-500 dark:border-strokedark dark:text-bodydark2">
-                    Nenhum usuario encontrado com os filtros atuais.
+                    Nenhum usuário encontrado com os filtros atuais.
                   </div>
                 )}
               </div>
@@ -240,7 +240,7 @@ export default function ManageUsers() {
             {tab === 'register' && (
               <div className="rounded-2xl border border-stroke bg-gray-50 p-4 dark:border-strokedark dark:bg-meta-4/30 sm:p-6">
                 <div className="mb-5">
-                  <h4 className="text-xl font-semibold text-black dark:text-white">Registrar novo usuario</h4>
+                  <h4 className="text-xl font-semibold text-black dark:text-white">Registrar novo usuário</h4>
                   <p className="mt-1 text-sm text-gray-600 dark:text-bodydark2">
                     Cadastre novas contas e defina o perfil de acesso diretamente nesta subaba.
                   </p>
@@ -263,9 +263,9 @@ export default function ManageUsers() {
                 </svg>
               </div>
               <div>
-                <h4 className="text-lg font-semibold text-black dark:text-white">Apagar login do usuario</h4>
+                <h4 className="text-lg font-semibold text-black dark:text-white">Apagar login do usuário</h4>
                 <p className="mt-1 text-sm text-gray-600 dark:text-bodydark2">
-                  Essa acao removera o acesso de <strong>{userToDelete.name}</strong> ao sistema.
+                  Essa ação removerá o acesso de <strong>{userToDelete.name}</strong> ao sistema.
                 </p>
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function ManageUsers() {
                 disabled={deletingId === userToDelete.id}
                 className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {deletingId === userToDelete.id ? 'Apagando...' : 'Confirmar exclusao'}
+                {deletingId === userToDelete.id ? 'Apagando...' : 'Confirmar exclusão'}
               </button>
             </div>
           </div>
@@ -291,4 +291,16 @@ export default function ManageUsers() {
       )}
     </DefaultLayout>
   );
+}
+
+function resolveApiMessage(error: any, fallback: string) {
+  if (Array.isArray(error?.response?.data?.errors) && error.response.data.errors.length > 0) {
+    return error.response.data.errors[0];
+  }
+
+  if (typeof error?.response?.data?.message === 'string' && error.response.data.message.trim()) {
+    return error.response.data.message;
+  }
+
+  return fallback;
 }

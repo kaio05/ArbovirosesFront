@@ -87,7 +87,7 @@ export default function UserRegistrationForm({ onSuccess }: UserRegistrationForm
       }
 
       if (password !== confirmPassword) {
-        const message = 'Senhas nao conferem';
+        const message = 'Senhas não conferem';
         setErrorMessage(message);
         toast.error(message);
         return;
@@ -112,7 +112,7 @@ export default function UserRegistrationForm({ onSuccess }: UserRegistrationForm
       }
 
       if (response?.status === 401 || response?.status === 403) {
-        message = 'Voce nao tem permissao para usar esse recurso!';
+        message = 'Você não tem permissão para usar esse recurso!';
         navigate('/auth/login');
       }
 
@@ -151,7 +151,7 @@ export default function UserRegistrationForm({ onSuccess }: UserRegistrationForm
           <div>
             <label className="mb-2.5 block font-medium text-black dark:text-white">Tipo de acesso</label>
             <select value={role} onChange={handleSetRole} className={inputClassName}>
-              <option value="USER">Usuario comum</option>
+              <option value="USER">Usuário comum</option>
               <option value="ADMIN">Administrador</option>
             </select>
           </div>
@@ -161,7 +161,7 @@ export default function UserRegistrationForm({ onSuccess }: UserRegistrationForm
           <label className="mb-2.5 block font-medium text-black dark:text-white">Nome</label>
           <input
             type="text"
-            placeholder="Insira o nome do usuario"
+            placeholder="Insira o nome do usuário"
             className={inputClassName}
             value={name}
             maxLength={MAX_NAME_LENGTH}
@@ -224,7 +224,7 @@ export default function UserRegistrationForm({ onSuccess }: UserRegistrationForm
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
             )}
-            Registrar usuario
+            Registrar usuário
           </button>
         </div>
       </form>

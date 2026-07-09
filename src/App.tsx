@@ -149,7 +149,7 @@ function App() {
         path="/usuarios"
         element={
           <ProtectedRoute requiredRole="ADMIN">
-            <PageTitle title="Gerenciar Usuarios" />
+            <PageTitle title="Gerenciar Usuários" />
             <ManageUsers />
           </ProtectedRoute>
         }
